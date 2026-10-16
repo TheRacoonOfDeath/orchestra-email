@@ -1,0 +1,211 @@
+# German translation of Orchestra Email.
+msgid ""
+msgstr ""
+"Project-Id-Version: orchestra-email\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-16 17:23+0200\n"
+"PO-Revision-Date: 2026-10-16 00:00+0000\n"
+"Last-Translator: Julian Nickerl\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/Admin/ComposePage.php:54 src/Admin/ComposePage.php:55 src/Plugin.php:106
+msgid "Email"
+msgstr "E-Mail"
+
+#: src/Admin/ComposePage.php:64 src/Admin/ComposePage.php:65
+#: src/Admin/ComposePage.php:86 src/Admin/ComposePage.php:101
+msgid "Write Email"
+msgstr "E-Mail schreiben"
+
+#: src/Admin/ComposePage.php:72 src/Admin/ComposePage.php:73
+#: src/Admin/ComposePage.php:98
+msgid "Sent Emails"
+msgstr "Gesendete E-Mails"
+
+#: src/EmailDraft.php:57
+msgid "Please enter a subject."
+msgstr "Bitte gib einen Betreff ein."
+
+#. translators: %d: maximum number of characters
+#: src/EmailDraft.php:60
+#, php-format
+msgid "The subject must not be longer than %d characters."
+msgstr "Der Betreff darf höchstens %d Zeichen lang sein."
+
+#: src/EmailDraft.php:64
+msgid "Please enter a message."
+msgstr "Bitte gib eine Nachricht ein."
+
+#. translators: %d: maximum number of characters
+#: src/EmailDraft.php:67
+#, php-format
+msgid "The message must not be longer than %d characters."
+msgstr "Die Nachricht darf höchstens %d Zeichen lang sein."
+
+#: src/EmailSender.php:87 src/Ui/EmailView.php:97
+msgid "Former member"
+msgstr "Ehemaliges Mitglied"
+
+#: src/EmailService.php:90
+msgid "Please select at least one group."
+msgstr "Bitte wähle mindestens eine Gruppe aus."
+
+#: src/EmailService.php:97
+msgid "You are not allowed to email one of the selected groups."
+msgstr "Du darfst einer der ausgewählten Gruppen keine E-Mails schreiben."
+
+#: src/EmailService.php:102
+msgid "The selected groups have no recipients."
+msgstr "Die ausgewählten Gruppen haben keine Empfänger."
+
+#. translators: 1: sender name, 2: site name, 3: list of recipient groups
+#: src/MessageFormatter.php:19
+#, php-format
+msgid "Sent by %1$s via %2$s to: %3$s"
+msgstr "Gesendet von %1$s über %2$s an: %3$s"
+
+#: src/Plugin.php:107
+msgid "Write to members, sections and project participants."
+msgstr "Schreibe an Mitglieder, Register und Projektteilnehmer."
+
+#: src/Plugin.php:147
+msgid ""
+"Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
+"Core; until then, Orchestra Core sends the emails itself."
+msgstr ""
+"Orchestra Email braucht Orchestra Core 0.7 oder neuer. Bitte aktualisiere "
+"Orchestra Core; bis dahin verschickt Orchestra Core die E-Mails selbst."
+
+#: src/Plugin.php:151
+msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
+msgstr "Orchestra Email braucht Orchestra Core. Bitte installiere und aktiviere es."
+
+#: src/Ui/EmailShortcode.php:34
+msgid "Please log in to write emails."
+msgstr "Bitte melde dich an, um E-Mails zu schreiben."
+
+#: src/Ui/EmailShortcode.php:37
+msgid "You are not allowed to send emails."
+msgstr "Du darfst keine E-Mails senden."
+
+#: src/Ui/EmailShortcode.php:45
+msgid "Sent emails"
+msgstr "Gesendete E-Mails"
+
+#: src/Ui/EmailShortcode.php:45
+msgid "Write email"
+msgstr "E-Mail schreiben"
+
+#. translators: %d: number of recipients
+#: src/Ui/EmailView.php:72
+#, php-format
+msgid "Your email has been sent to %d recipients."
+msgstr "Deine E-Mail wurde an %d Empfänger gesendet."
+
+#. translators: %d: number of recipients
+#: src/Ui/EmailView.php:74
+#, php-format
+msgid ""
+"Your email is being sent to %d recipients. Large groups take a few minutes."
+msgstr ""
+"Deine E-Mail wird an %d Empfänger gesendet. Bei großen Gruppen dauert das "
+"einige Minuten."
+
+#: src/Ui/EmailView.php:84
+msgid "Sent"
+msgstr "Gesendet"
+
+#. translators: 1: number of sent emails, 2: number of recipients
+#: src/Ui/EmailView.php:87
+#, php-format
+msgid "Sending (%1$d of %2$d)"
+msgstr "Wird gesendet (%1$d von %2$d)"
+
+#. translators: %d: number of emails that could not be sent
+#: src/Ui/EmailView.php:93
+#, php-format
+msgid "%d failed"
+msgstr "%d fehlgeschlagen"
+
+#: src/Ui/EmailView.php:107
+msgid "Date"
+msgstr "Datum"
+
+#: src/Ui/EmailView.php:108
+msgid "Sender"
+msgstr "Absender"
+
+#: src/Ui/EmailView.php:109 src/Ui/EmailView.php:156 src/Ui/EmailView.php:204
+msgid "Subject"
+msgstr "Betreff"
+
+#: src/Ui/EmailView.php:110 src/Ui/EmailView.php:196
+msgid "Groups"
+msgstr "Gruppen"
+
+#: src/Ui/EmailView.php:111 src/Ui/EmailView.php:128 src/Ui/EmailView.php:198
+msgid "Recipients"
+msgstr "Empfänger"
+
+#: src/Ui/EmailView.php:112
+msgid "Status"
+msgstr "Status"
+
+#: src/Ui/EmailView.php:115
+msgid "No emails have been sent yet."
+msgstr "Es wurden noch keine E-Mails gesendet."
+
+#. translators: %d: number of days
+#: src/Ui/EmailView.php:118
+#, php-format
+msgid ""
+"Texts are deleted once sent. The log shows who emailed which groups for %d "
+"days."
+msgstr ""
+"Die Texte werden nach dem Versand gelöscht. Das Protokoll zeigt %d Tage "
+"lang, wer welchen Gruppen geschrieben hat."
+
+#: src/Ui/EmailView.php:162 src/Ui/EmailView.php:206
+msgid "Message"
+msgstr "Nachricht"
+
+#: src/Ui/EmailView.php:166
+msgid ""
+"Plain text. Every recipient gets their own email; replies go to your email "
+"address."
+msgstr ""
+"Reiner Text. Alle Empfänger erhalten eine eigene E-Mail; Antworten gehen an "
+"deine E-Mail-Adresse."
+
+#: src/Ui/EmailView.php:171
+msgid "Review"
+msgstr "Prüfen"
+
+#. translators: %d: number of recipients
+#: src/Ui/EmailView.php:200
+#, php-format
+msgid "%d person"
+msgid_plural "%d people"
+msgstr[0] "%d Person"
+msgstr[1] "%d Personen"
+
+#. translators: %d: number of recipients
+#: src/Ui/EmailView.php:220
+#, php-format
+msgid "Send the email to %d person now?"
+msgid_plural "Send the email to %d people now?"
+msgstr[0] "Die E-Mail jetzt an %d Person senden?"
+msgstr[1] "Die E-Mail jetzt an %d Personen senden?"
+
+#: src/Ui/EmailView.php:228
+msgid "Send"
+msgstr "Senden"
+
+#: src/Ui/EmailView.php:233
+msgid "Edit"
+msgstr "Bearbeiten"
