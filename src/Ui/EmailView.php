@@ -77,7 +77,7 @@ final class EmailView
         }
 
         $rows = [];
-        $format = self::option('date_format', 'Y-m-d') . ' ' . self::option('time_format', 'H:i');
+        $format = self::dateTimeFormat();
         foreach ($this->email->log() as $message) {
             $sender = $message->senderId === null ? false : \get_userdata($message->senderId);
             $status = $message->status === EmailMessage::STATUS_SENT
@@ -93,7 +93,7 @@ final class EmailView
                 $status .= ' ' . Html::badge(\sprintf(\__('%d failed', 'orchestra-email'), $message->failed), 'danger');
             }
             $rows[] = [
-                \esc_html(\get_date_from_gmt($message->createdAt, $format)),
+                \esc_html(self::fromGmt($message->createdAt, $format)),
                 \esc_html($sender === false ? \__('Former member', 'orchestra-email') : $sender->display_name),
                 '<strong>' . \esc_html($message->subject) . '</strong>',
                 \esc_html(\implode(', ', $message->groupLabels)),
@@ -233,6 +233,33 @@ final class EmailView
             . Form::submit(\__('Edit', 'orchestra-email')) . '</form>';
 
         return $html . '<div class="orchestra-actions">' . $send . $edit . '</div>';
+    }
+
+    /**
+     * The site's date and time format. Formats that are still WordPress's English defaults are
+     * replaced by the defaults of the language the Orchestra pages are shown in.
+     */
+    private static function dateTimeFormat(): string
+    {
+        $date = self::option('date_format', 'Y-m-d');
+        $time = self::option('time_format', 'H:i');
+
+        /* translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y */
+        $date = $date === 'F j, Y' ? \__('F j, Y', 'orchestra-email') : $date;
+        /* translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i */
+        $time = $time === 'g:i a' ? \__('g:i a', 'orchestra-email') : $time;
+
+        return $date . ' ' . $time;
+    }
+
+    /**
+     * A point in time stored in UTC, in the site's time zone with translated month names.
+     */
+    private static function fromGmt(string $dateTime, string $format): string
+    {
+        $timestamp = \strtotime($dateTime . ' UTC');
+
+        return $timestamp === false ? $dateTime : (string) \wp_date($format, $timestamp);
     }
 
     private static function option(string $name, string $default): string

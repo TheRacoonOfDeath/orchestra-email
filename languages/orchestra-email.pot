@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 17:23+0200\n"
+"POT-Creation-Date: 2026-10-16 18:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,7 +52,7 @@ msgstr ""
 msgid "The message must not be longer than %d characters."
 msgstr ""
 
-#: src/EmailSender.php:87 src/Ui/EmailView.php:97
+#: src/EmailSender.php:99 src/Ui/EmailView.php:97
 msgid "Former member"
 msgstr ""
 
@@ -78,13 +78,13 @@ msgstr ""
 msgid "Write to members, sections and project participants."
 msgstr ""
 
-#: src/Plugin.php:147
+#: src/Plugin.php:151
 msgid ""
 "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
 "Core; until then, Orchestra Core sends the emails itself."
 msgstr ""
 
-#: src/Plugin.php:151
+#: src/Plugin.php:155
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
 msgstr ""
 
@@ -205,4 +205,14 @@ msgstr ""
 
 #: src/Ui/EmailView.php:233
 msgid "Edit"
+msgstr ""
+
+#. translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y
+#: src/Ui/EmailView.php:248
+msgid "F j, Y"
+msgstr ""
+
+#. translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i
+#: src/Ui/EmailView.php:250
+msgid "g:i a"
 msgstr ""

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 17:23+0200\n"
+"POT-Creation-Date: 2026-10-16 18:21+0200\n"
 "PO-Revision-Date: 2026-10-16 00:00+0000\n"
 "Last-Translator: Julian Nickerl\n"
 "Language-Team: German\n"
@@ -47,7 +47,7 @@ msgstr "Bitte gib eine Nachricht ein."
 msgid "The message must not be longer than %d characters."
 msgstr "Die Nachricht darf höchstens %d Zeichen lang sein."
 
-#: src/EmailSender.php:87 src/Ui/EmailView.php:97
+#: src/EmailSender.php:99 src/Ui/EmailView.php:97
 msgid "Former member"
 msgstr "Ehemaliges Mitglied"
 
@@ -73,7 +73,7 @@ msgstr "Gesendet von %1$s über %2$s an: %3$s"
 msgid "Write to members, sections and project participants."
 msgstr "Schreibe an Mitglieder, Register und Projektteilnehmer."
 
-#: src/Plugin.php:147
+#: src/Plugin.php:151
 msgid ""
 "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
 "Core; until then, Orchestra Core sends the emails itself."
@@ -81,9 +81,10 @@ msgstr ""
 "Orchestra Email braucht Orchestra Core 0.7 oder neuer. Bitte aktualisiere "
 "Orchestra Core; bis dahin verschickt Orchestra Core die E-Mails selbst."
 
-#: src/Plugin.php:151
+#: src/Plugin.php:155
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
-msgstr "Orchestra Email braucht Orchestra Core. Bitte installiere und aktiviere es."
+msgstr ""
+"Orchestra Email braucht Orchestra Core. Bitte installiere und aktiviere es."
 
 #: src/Ui/EmailShortcode.php:34
 msgid "Please log in to write emails."
@@ -209,3 +210,13 @@ msgstr "Senden"
 #: src/Ui/EmailView.php:233
 msgid "Edit"
 msgstr "Bearbeiten"
+
+#. translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y
+#: src/Ui/EmailView.php:248
+msgid "F j, Y"
+msgstr "j. F Y"
+
+#. translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i
+#: src/Ui/EmailView.php:250
+msgid "g:i a"
+msgstr "H:i"
