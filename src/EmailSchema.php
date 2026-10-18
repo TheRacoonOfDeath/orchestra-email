@@ -16,7 +16,7 @@ use wpdb;
 final class EmailSchema
 {
     /** Increase whenever a table definition changes; dbDelta() applies the difference. */
-    public const VERSION = 2;
+    public const VERSION = 3;
 
     public const OPTION_VERSION = 'orchestra_core_schema_version';
 
@@ -67,13 +67,14 @@ final class EmailSchema
 
         $charsetCollate = $this->wpdb->get_charset_collate();
 
-        // The body is kept only until the email is sent; the log keeps the metadata.
+        // The body and the reply address are kept only until the email is sent; the log keeps the metadata.
         // dbDelta() is picky: one column per line, two spaces after PRIMARY KEY, KEY instead of INDEX.
         \dbDelta("CREATE TABLE {$this->messagesTable()} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   sender_id bigint(20) unsigned DEFAULT NULL,
   subject varchar(255) NOT NULL,
   body longtext DEFAULT NULL,
+  reply_to varchar(100) DEFAULT NULL,
   group_labels text NOT NULL,
   recipients int(11) NOT NULL DEFAULT 0,
   sent int(11) NOT NULL DEFAULT 0,

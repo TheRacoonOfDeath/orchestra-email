@@ -56,7 +56,7 @@ final class EmailView
 
         $draft = $submitted
             ? EmailDraft::fromForm(\wp_unslash($_POST))
-            : new EmailDraft(self::requestedGroupIds(), '', '');
+            : new EmailDraft(self::requestedGroupIds(), '', '', [], \wp_get_current_user()->user_email);
         $errors = [];
         if (self::uploadTooLarge()) {
             $errors[] = \sprintf(
@@ -71,7 +71,7 @@ final class EmailView
             $draft = new EmailDraft($draft->groupIds, $draft->subject, $draft->body, [
                 ...$draft->attachmentIds,
                 ...\array_map(static fn (Attachment $a): int => $a->id, $uploaded),
-            ]);
+            ], $draft->replyTo);
             $errors = [...$errors, ...$this->email->validate($draft, \get_current_user_id())];
         }
 
@@ -177,6 +177,14 @@ final class EmailView
         $html .= '</fieldset>';
 
         $html .= Html::field(
+            'orchestra-email-reply-to',
+            \__('Replies go to', 'orchestra-email'),
+            '<input type="email" id="orchestra-email-reply-to" name="' . EmailDraft::FIELD_REPLY_TO
+                . '" required maxlength="' . EmailDraft::REPLY_TO_MAX_LENGTH . '" value="'
+                . \esc_attr($draft->replyTo) . '">',
+            \__("Prefilled with your email address. Recipients' replies go to this address.", 'orchestra-email')
+        );
+        $html .= Html::field(
             'orchestra-email-subject',
             \__('Subject', 'orchestra-email'),
             '<input type="text" id="orchestra-email-subject" name="subject" required maxlength="'
@@ -186,7 +194,7 @@ final class EmailView
             self::EDITOR_ID,
             \__('Message', 'orchestra-email'),
             self::editor($draft->body),
-            \__('Every recipient gets their own email; replies go to your email address.', 'orchestra-email')
+            \__('Every recipient gets their own email.', 'orchestra-email')
         );
         $html .= $this->attachmentFields($draft);
 
@@ -224,6 +232,7 @@ final class EmailView
                     . '</strong><br><span class="orchestra-muted">' . \esc_html(\implode(', ', $names))
                     . ($count > self::MAX_LISTED_RECIPIENTS ? ', …' : '') . '</span>',
             ],
+            [\__('Replies go to', 'orchestra-email'), \esc_html($draft->replyTo)],
             [\__('Subject', 'orchestra-email'), \esc_html($draft->subject)],
             // The body was sanitized by EmailDraft::fromForm() in this request.
             [\__('Message', 'orchestra-email'), '<div class="orchestra-email-preview">' . $draft->body . '</div>'],
@@ -233,7 +242,7 @@ final class EmailView
             ]]),
         ]) . '</div>';
 
-        $fields = ['subject' => $draft->subject];
+        $fields = ['subject' => $draft->subject, EmailDraft::FIELD_REPLY_TO => $draft->replyTo];
         $groupFields = '';
         foreach ($draft->groupIds as $id) {
             $groupFields .= Form::hidden('groups[]', $id);
@@ -257,7 +266,8 @@ final class EmailView
 
         $edit = '<form method="post" action="' . \esc_url($pageUrl) . '" class="orchestra-inline-form">'
             . \wp_nonce_field(self::REVIEW_NONCE, '_wpnonce', false, false) . Form::hidden('op', 'edit')
-            . Form::hidden('subject', $draft->subject) . $groupFields . $body
+            . Form::hidden('subject', $draft->subject)
+            . Form::hidden(EmailDraft::FIELD_REPLY_TO, $draft->replyTo) . $groupFields . $body
             . Form::submit(\__('Edit', 'orchestra-email')) . '</form>';
 
         return $html . '<div class="orchestra-actions">' . $send . $edit . '</div>';

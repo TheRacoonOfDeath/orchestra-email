@@ -27,11 +27,12 @@ final class EmailLog
             'sender_id' => $senderId,
             'subject' => $draft->subject,
             'body' => $draft->body,
+            'reply_to' => $draft->replyTo,
             'group_labels' => (string) \wp_json_encode($groupLabels),
             'recipients' => \count($recipientIds),
             'status' => EmailMessage::STATUS_SENDING,
             'created_at' => \current_time('mysql', true),
-        ], ['%d', '%s', '%s', '%s', '%d', '%s', '%s']);
+        ], ['%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s']);
         if ($inserted === false) {
             throw new RuntimeException('Could not store the email: ' . $this->wpdb->last_error);
         }
@@ -126,12 +127,12 @@ final class EmailLog
     }
 
     /**
-     * Marks emails without queued recipients as sent and deletes their body.
+     * Marks emails without queued recipients as sent and deletes their body and reply address.
      */
     public function completeFinished(): void
     {
         $this->execute($this->wpdb->prepare(
-            'UPDATE %i SET status = %s, body = NULL, completed_at = %s'
+            'UPDATE %i SET status = %s, body = NULL, reply_to = NULL, completed_at = %s'
                 . ' WHERE status = %s AND id NOT IN (SELECT message_id FROM %i)',
             $this->schema->messagesTable(),
             EmailMessage::STATUS_SENT,
@@ -201,6 +202,7 @@ final class EmailLog
             Row::int($row, 'failed'),
             Row::string($row, 'status'),
             Row::string($row, 'created_at'),
+            ($row['reply_to'] ?? null) === null ? null : Row::string($row, 'reply_to'),
         );
     }
 }

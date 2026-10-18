@@ -21,8 +21,10 @@ The plugin provides:
   attachments
 - sending one email per recipient, so recipients never see each other's addresses
 - sending in the background in batches with WP-Cron, to avoid timeouts and hosting limits
+- a reply address, prefilled with the sender's email address and changeable, e.g. to a shared
+  mailbox
 - a log with metadata only (sender, groups, subject, number of recipients, time), deleted after
-  12 months; the text is deleted as soon as the email has been sent
+  12 months; the text and the reply address are deleted as soon as the email has been sent
 
 Delivery uses `wp_mail()`, so an SMTP plugin can be added at any time without changes.
 
@@ -32,7 +34,8 @@ The Email page (`[orchestra_email]`) and **Email → Write Email** in wp-admin a
 who may email at least one group.
 
 1. Select one or more groups. Groups are listed by category, e.g. "Orchestra" or a project.
-2. Enter subject and message. The toolbar formats the selected text: bold, italic, underline, font
+2. Check the address replies go to (your own by default; any valid address, e.g. a shared
+   mailbox), then enter subject and message. The toolbar formats the selected text: bold, italic, underline, font
    size, color, bulleted and numbered lists, and removing the formatting.
 3. Optionally choose attachments and click **Review**. Attachments chosen so far stay listed as
    checkboxes; uncheck one to leave it out.
@@ -121,11 +124,12 @@ programs that do not show HTML.
   `orchestra_core_email_queue` (user IDs only).
 - The first batch is sent right away, the rest by the WP-Cron event `orchestra_core_email_send`
   every minute. A batch has 50 emails (filter `orchestra_email_batch_size`).
-- Every recipient gets their own HTML email via `wp_mail()`, with **Reply-To** set to the sender, a
+- Every recipient gets their own HTML email via `wp_mail()`, with **Reply-To** set to the address
+  chosen when writing (by default the sender's; emails queued before 0.3 use the sender's), a
   footer naming sender and groups, and the attachments. The **From** address is left to WordPress
   (`wordpress@your-domain`) or an SMTP plugin.
 - A failed delivery is retried twice in the next batches, then counted as failed in the log.
-- When all emails of a message are sent, its text is deleted. The log entry is deleted after
+- When all emails of a message are sent, its text and reply address are deleted. The log entry is deleted after
   12 months (filter `orchestra_email_log_retention_days`) by the daily event
   `orchestra_core_email_purge`.
 - When a user is deleted, their log entries show "Former member" and their queued emails are

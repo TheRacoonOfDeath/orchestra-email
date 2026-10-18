@@ -10,7 +10,7 @@ Part of the Orchestra plugin suite. Requires the [orchestra-core](https://github
   recipients and send it
 - Recipient groups registered by the other plugins: everyone, members, conductors and organizers
   (orchestra-members), accepted and pending participants of a project (orchestra-projects)
-- One email per recipient, sent in the background in batches; replies go to the sender
+- One email per recipient, sent in the background in batches; replies go to the sender or an address they choose
 - A log of the sent emails with metadata only, deleted after 12 months
 
 ## Installation

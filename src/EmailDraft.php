@@ -16,21 +16,28 @@ final class EmailDraft
     /** The field with the IDs of the attachments uploaded so far: `attachment_ids[]`. */
     public const FIELD_ATTACHMENT_IDS = 'attachment_ids';
 
+    /** The field with the address replies go to: `reply_to`. */
+    public const FIELD_REPLY_TO = 'reply_to';
+    /** The length of WordPress's `user_email`. */
+    public const REPLY_TO_MAX_LENGTH = 100;
+
     /**
      * @param list<string> $groupIds
      * @param string $body HTML, see {@see EmailBody}
      * @param list<int> $attachmentIds Uploaded attachments; {@see EmailService::validate()} checks them
+     * @param string $replyTo The address replies go to, by default the sender's
      */
     public function __construct(
         public readonly array $groupIds,
         public readonly string $subject,
         public readonly string $body,
         public readonly array $attachmentIds = [],
+        public readonly string $replyTo = '',
     ) {
     }
 
     /**
-     * @param array<mixed> $input Unslashed form data with `groups`, `subject`, `body` and `attachment_ids`
+     * @param array<mixed> $input Unslashed form data with `groups`, `subject`, `body`, `attachment_ids` and `reply_to`
      */
     public static function fromForm(array $input): self
     {
@@ -48,13 +55,16 @@ final class EmailDraft
             static fn (mixed $id): int => \is_numeric($id) ? (int) $id : 0,
             $attachments
         ), static fn (int $id): bool => $id > 0)));
+        $replyTo = \is_string($input[self::FIELD_REPLY_TO] ?? null) ? $input[self::FIELD_REPLY_TO] : '';
 
         return new self(
             \array_values($groupIds),
             // A line break in the subject would inject headers.
             \trim((string) \preg_replace('/[\r\n\t]+/', ' ', \strip_tags($subject))),
             EmailBody::sanitize($body),
-            $attachmentIds
+            $attachmentIds,
+            // Addresses contain no whitespace; a line break would inject headers.
+            (string) \preg_replace('/\s+/', '', $replyTo)
         );
     }
 
@@ -79,6 +89,9 @@ final class EmailDraft
             /* translators: %d: maximum number of characters */
             $message = \__('The message must not be longer than %d characters.', 'orchestra-email');
             $errors[] = \sprintf($message, self::BODY_MAX_LENGTH);
+        }
+        if (\mb_strlen($this->replyTo) > self::REPLY_TO_MAX_LENGTH || \is_email($this->replyTo) === false) {
+            $errors[] = \__('Please enter a valid email address for replies.', 'orchestra-email');
         }
 
         return $errors;

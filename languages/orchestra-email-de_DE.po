@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 22:38+0200\n"
+"POT-Creation-Date: 2026-10-18 23:49+0200\n"
 "PO-Revision-Date: 2026-10-16 00:00+0000\n"
 "Last-Translator: Julian Nickerl\n"
 "Language-Team: German\n"
@@ -31,7 +31,9 @@ msgstr "Gesendete E-Mails"
 #: src/Attachment/AttachmentService.php:83
 #, php-format
 msgid "\"%1$s\" has a file type that cannot be attached. Allowed types: %2$s."
-msgstr "„%1$s“ hat einen Dateityp, der nicht angehängt werden kann. Erlaubte Typen: %2$s."
+msgstr ""
+"„%1$s“ hat einen Dateityp, der nicht angehängt werden kann. Erlaubte Typen: "
+"%2$s."
 
 #. translators: %s: file name
 #: src/Attachment/AttachmentService.php:97
@@ -69,25 +71,29 @@ msgstr "„%s“ konnte nicht hochgeladen werden."
 msgid "\"%s\" is empty."
 msgstr "„%s“ ist leer."
 
-#: src/EmailDraft.php:70
+#: src/EmailDraft.php:80
 msgid "Please enter a subject."
 msgstr "Bitte gib einen Betreff ein."
 
 #. translators: %d: maximum number of characters
-#: src/EmailDraft.php:73
+#: src/EmailDraft.php:83
 #, php-format
 msgid "The subject must not be longer than %d characters."
 msgstr "Der Betreff darf höchstens %d Zeichen lang sein."
 
-#: src/EmailDraft.php:77
+#: src/EmailDraft.php:87
 msgid "Please enter a message."
 msgstr "Bitte gib eine Nachricht ein."
 
 #. translators: %d: maximum number of characters
-#: src/EmailDraft.php:80
+#: src/EmailDraft.php:90
 #, php-format
 msgid "The message must not be longer than %d characters."
 msgstr "Die Nachricht darf höchstens %d Zeichen lang sein."
+
+#: src/EmailDraft.php:94
+msgid "Please enter a valid email address for replies."
+msgstr "Bitte gib eine gültige E-Mail-Adresse für Antworten ein."
 
 #: src/EmailSender.php:107 src/Ui/EmailView.php:121
 msgid "Former member"
@@ -120,12 +126,17 @@ msgid "Write to members, sections and project participants."
 msgstr "Schreibe an Mitglieder, Register und Projektteilnehmer."
 
 #: src/Plugin.php:158
-msgid "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra Core; until then, Orchestra Core sends the emails itself."
-msgstr "Orchestra Email braucht Orchestra Core 0.7 oder neuer. Bitte aktualisiere Orchestra Core; bis dahin verschickt Orchestra Core die E-Mails selbst."
+msgid ""
+"Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
+"Core; until then, Orchestra Core sends the emails itself."
+msgstr ""
+"Orchestra Email braucht Orchestra Core 0.7 oder neuer. Bitte aktualisiere "
+"Orchestra Core; bis dahin verschickt Orchestra Core die E-Mails selbst."
 
 #: src/Plugin.php:162
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
-msgstr "Orchestra Email braucht Orchestra Core. Bitte installiere und aktiviere es."
+msgstr ""
+"Orchestra Email braucht Orchestra Core. Bitte installiere und aktiviere es."
 
 #: src/Ui/EmailShortcode.php:34
 msgid "Please log in to write emails."
@@ -147,7 +158,9 @@ msgstr "E-Mail schreiben"
 #: src/Ui/EmailView.php:64
 #, php-format
 msgid "The attachments are too large. At most %s can be uploaded at once."
-msgstr "Die Anhänge sind zu groß. Es können höchstens %s auf einmal hochgeladen werden."
+msgstr ""
+"Die Anhänge sind zu groß. Es können höchstens %s auf einmal hochgeladen "
+"werden."
 
 #. translators: %d: number of recipients
 #: src/Ui/EmailView.php:96
@@ -158,8 +171,11 @@ msgstr "Deine E-Mail wurde an %d Empfänger gesendet."
 #. translators: %d: number of recipients
 #: src/Ui/EmailView.php:98
 #, php-format
-msgid "Your email is being sent to %d recipients. Large groups take a few minutes."
-msgstr "Deine E-Mail wird an %d Empfänger gesendet. Bei großen Gruppen dauert das einige Minuten."
+msgid ""
+"Your email is being sent to %d recipients. Large groups take a few minutes."
+msgstr ""
+"Deine E-Mail wird an %d Empfänger gesendet. Bei großen Gruppen dauert das "
+"einige Minuten."
 
 #: src/Ui/EmailView.php:108
 msgid "Sent"
@@ -185,15 +201,15 @@ msgstr "Datum"
 msgid "Sender"
 msgstr "Absender"
 
-#: src/Ui/EmailView.php:133 src/Ui/EmailView.php:181 src/Ui/EmailView.php:227
+#: src/Ui/EmailView.php:133 src/Ui/EmailView.php:189 src/Ui/EmailView.php:236
 msgid "Subject"
 msgstr "Betreff"
 
-#: src/Ui/EmailView.php:134 src/Ui/EmailView.php:219
+#: src/Ui/EmailView.php:134 src/Ui/EmailView.php:227
 msgid "Groups"
 msgstr "Gruppen"
 
-#: src/Ui/EmailView.php:135 src/Ui/EmailView.php:153 src/Ui/EmailView.php:221
+#: src/Ui/EmailView.php:135 src/Ui/EmailView.php:153 src/Ui/EmailView.php:229
 msgid "Recipients"
 msgstr "Empfänger"
 
@@ -208,96 +224,124 @@ msgstr "Es wurden noch keine E-Mails gesendet."
 #. translators: %d: number of days
 #: src/Ui/EmailView.php:142
 #, php-format
-msgid "Texts are deleted once sent. The log shows who emailed which groups for %d days."
-msgstr "Die Texte werden nach dem Versand gelöscht. Das Protokoll zeigt %d Tage lang, wer welchen Gruppen geschrieben hat."
+msgid ""
+"Texts are deleted once sent. The log shows who emailed which groups for %d "
+"days."
+msgstr ""
+"Die Texte werden nach dem Versand gelöscht. Das Protokoll zeigt %d Tage "
+"lang, wer welchen Gruppen geschrieben hat."
 
-#: src/Ui/EmailView.php:187 src/Ui/EmailView.php:229
+#: src/Ui/EmailView.php:181 src/Ui/EmailView.php:235
+msgid "Replies go to"
+msgstr "Antworten an"
+
+#: src/Ui/EmailView.php:185
+msgid ""
+"Prefilled with your email address. Recipients' replies go to this address."
+msgstr ""
+"Vorausgefüllt mit deiner E-Mail-Adresse. Antworten der Empfänger gehen an "
+"diese Adresse."
+
+#: src/Ui/EmailView.php:195 src/Ui/EmailView.php:238
 msgid "Message"
 msgstr "Nachricht"
 
-#: src/Ui/EmailView.php:189
-msgid "Every recipient gets their own email; replies go to your email address."
-msgstr "Alle Empfänger bekommen eine eigene E-Mail; Antworten gehen an deine E-Mail-Adresse."
+#: src/Ui/EmailView.php:197
+msgid "Every recipient gets their own email."
+msgstr "Alle Empfänger bekommen eine eigene E-Mail."
 
-#: src/Ui/EmailView.php:193
+#: src/Ui/EmailView.php:201
 msgid "Review"
 msgstr "Prüfen"
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:223
+#: src/Ui/EmailView.php:231
 #, php-format
 msgid "%d person"
 msgid_plural "%d people"
 msgstr[0] "%d Person"
 msgstr[1] "%d Personen"
 
-#: src/Ui/EmailView.php:231 src/Ui/EmailView.php:324
+#: src/Ui/EmailView.php:240 src/Ui/EmailView.php:334
 msgid "Attachments"
 msgstr "Anhänge"
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:248
+#: src/Ui/EmailView.php:257
 #, php-format
 msgid "Send the email to %d person now?"
 msgid_plural "Send the email to %d people now?"
 msgstr[0] "Die E-Mail jetzt an %d Person senden?"
 msgstr[1] "Die E-Mail jetzt an %d Personen senden?"
 
-#: src/Ui/EmailView.php:256
+#: src/Ui/EmailView.php:265
 msgid "Send"
 msgstr "Senden"
 
-#: src/Ui/EmailView.php:261
+#: src/Ui/EmailView.php:271
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: src/Ui/EmailView.php:272
+#: src/Ui/EmailView.php:282
 msgid "Black"
 msgstr "Schwarz"
 
-#: src/Ui/EmailView.php:273
+#: src/Ui/EmailView.php:283
 msgid "Gray"
 msgstr "Grau"
 
-#: src/Ui/EmailView.php:274
+#: src/Ui/EmailView.php:284
 msgid "Red"
 msgstr "Rot"
 
-#: src/Ui/EmailView.php:275
+#: src/Ui/EmailView.php:285
 msgid "Orange"
 msgstr "Orange"
 
-#: src/Ui/EmailView.php:276
+#: src/Ui/EmailView.php:286
 msgid "Green"
 msgstr "Grün"
 
-#: src/Ui/EmailView.php:277
+#: src/Ui/EmailView.php:287
 msgid "Blue"
 msgstr "Blau"
 
-#: src/Ui/EmailView.php:278
+#: src/Ui/EmailView.php:288
 msgid "Purple"
 msgstr "Lila"
 
-#: src/Ui/EmailView.php:339
+#: src/Ui/EmailView.php:349
 msgid "Add attachments"
 msgstr "Anhänge hinzufügen"
 
 #. translators: 1: maximum number of files, 2: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:342
+#: src/Ui/EmailView.php:352
 #, php-format
-msgid "Up to %1$d files with %2$s in total, e.g. PDF, images or Office documents."
-msgstr "Bis zu %1$d Dateien mit insgesamt %2$s, z. B. PDF, Bilder oder Office-Dokumente."
+msgid ""
+"Up to %1$d files with %2$s in total, e.g. PDF, images or Office documents."
+msgstr ""
+"Bis zu %1$d Dateien mit insgesamt %2$s, z. B. PDF, Bilder oder Office-"
+"Dokumente."
 
 #. translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y
-#: src/Ui/EmailView.php:372
+#: src/Ui/EmailView.php:382
 msgid "F j, Y"
 msgstr "j. F Y"
 
 #. translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i
-#: src/Ui/EmailView.php:374
+#: src/Ui/EmailView.php:384
 msgid "g:i a"
 msgstr "H:i"
 
-#~ msgid "Plain text. Every recipient gets their own email; replies go to your email address."
-#~ msgstr "Reiner Text. Alle Empfänger erhalten eine eigene E-Mail; Antworten gehen an deine E-Mail-Adresse."
+#~ msgid ""
+#~ "Every recipient gets their own email; replies go to your email address."
+#~ msgstr ""
+#~ "Alle Empfänger bekommen eine eigene E-Mail; Antworten gehen an deine E-"
+#~ "Mail-Adresse."
+
+#~ msgid ""
+#~ "Plain text. Every recipient gets their own email; replies go to your "
+#~ "email address."
+#~ msgstr ""
+#~ "Reiner Text. Alle Empfänger erhalten eine eigene E-Mail; Antworten gehen "
+#~ "an deine E-Mail-Adresse."

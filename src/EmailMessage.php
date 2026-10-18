@@ -29,6 +29,8 @@ final class EmailMessage
         public readonly string $status,
         /** UTC, Y-m-d H:i:s */
         public readonly string $createdAt,
+        /** The address replies go to; null once the email has been sent, and for emails before 0.3 */
+        public readonly ?string $replyTo = null,
     ) {
     }
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 22:38+0200\n"
+"POT-Creation-Date: 2026-10-18 23:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,24 +74,28 @@ msgstr ""
 msgid "\"%s\" is empty."
 msgstr ""
 
-#: src/EmailDraft.php:70
+#: src/EmailDraft.php:80
 msgid "Please enter a subject."
 msgstr ""
 
 #. translators: %d: maximum number of characters
-#: src/EmailDraft.php:73
+#: src/EmailDraft.php:83
 #, php-format
 msgid "The subject must not be longer than %d characters."
 msgstr ""
 
-#: src/EmailDraft.php:77
+#: src/EmailDraft.php:87
 msgid "Please enter a message."
 msgstr ""
 
 #. translators: %d: maximum number of characters
-#: src/EmailDraft.php:80
+#: src/EmailDraft.php:90
 #, php-format
 msgid "The message must not be longer than %d characters."
+msgstr ""
+
+#: src/EmailDraft.php:94
+msgid "Please enter a valid email address for replies."
 msgstr ""
 
 #: src/EmailSender.php:107 src/Ui/EmailView.php:121
@@ -193,15 +197,15 @@ msgstr ""
 msgid "Sender"
 msgstr ""
 
-#: src/Ui/EmailView.php:133 src/Ui/EmailView.php:181 src/Ui/EmailView.php:227
+#: src/Ui/EmailView.php:133 src/Ui/EmailView.php:189 src/Ui/EmailView.php:236
 msgid "Subject"
 msgstr ""
 
-#: src/Ui/EmailView.php:134 src/Ui/EmailView.php:219
+#: src/Ui/EmailView.php:134 src/Ui/EmailView.php:227
 msgid "Groups"
 msgstr ""
 
-#: src/Ui/EmailView.php:135 src/Ui/EmailView.php:153 src/Ui/EmailView.php:221
+#: src/Ui/EmailView.php:135 src/Ui/EmailView.php:153 src/Ui/EmailView.php:229
 msgid "Recipients"
 msgstr ""
 
@@ -221,91 +225,100 @@ msgid ""
 "days."
 msgstr ""
 
-#: src/Ui/EmailView.php:187 src/Ui/EmailView.php:229
+#: src/Ui/EmailView.php:181 src/Ui/EmailView.php:235
+msgid "Replies go to"
+msgstr ""
+
+#: src/Ui/EmailView.php:185
+msgid ""
+"Prefilled with your email address. Recipients' replies go to this address."
+msgstr ""
+
+#: src/Ui/EmailView.php:195 src/Ui/EmailView.php:238
 msgid "Message"
 msgstr ""
 
-#: src/Ui/EmailView.php:189
-msgid "Every recipient gets their own email; replies go to your email address."
+#: src/Ui/EmailView.php:197
+msgid "Every recipient gets their own email."
 msgstr ""
 
-#: src/Ui/EmailView.php:193
+#: src/Ui/EmailView.php:201
 msgid "Review"
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:223
+#: src/Ui/EmailView.php:231
 #, php-format
 msgid "%d person"
 msgid_plural "%d people"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Ui/EmailView.php:231 src/Ui/EmailView.php:324
+#: src/Ui/EmailView.php:240 src/Ui/EmailView.php:334
 msgid "Attachments"
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:248
+#: src/Ui/EmailView.php:257
 #, php-format
 msgid "Send the email to %d person now?"
 msgid_plural "Send the email to %d people now?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Ui/EmailView.php:256
+#: src/Ui/EmailView.php:265
 msgid "Send"
 msgstr ""
 
-#: src/Ui/EmailView.php:261
+#: src/Ui/EmailView.php:271
 msgid "Edit"
 msgstr ""
 
-#: src/Ui/EmailView.php:272
+#: src/Ui/EmailView.php:282
 msgid "Black"
 msgstr ""
 
-#: src/Ui/EmailView.php:273
+#: src/Ui/EmailView.php:283
 msgid "Gray"
 msgstr ""
 
-#: src/Ui/EmailView.php:274
+#: src/Ui/EmailView.php:284
 msgid "Red"
 msgstr ""
 
-#: src/Ui/EmailView.php:275
+#: src/Ui/EmailView.php:285
 msgid "Orange"
 msgstr ""
 
-#: src/Ui/EmailView.php:276
+#: src/Ui/EmailView.php:286
 msgid "Green"
 msgstr ""
 
-#: src/Ui/EmailView.php:277
+#: src/Ui/EmailView.php:287
 msgid "Blue"
 msgstr ""
 
-#: src/Ui/EmailView.php:278
+#: src/Ui/EmailView.php:288
 msgid "Purple"
 msgstr ""
 
-#: src/Ui/EmailView.php:339
+#: src/Ui/EmailView.php:349
 msgid "Add attachments"
 msgstr ""
 
 #. translators: 1: maximum number of files, 2: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:342
+#: src/Ui/EmailView.php:352
 #, php-format
 msgid ""
 "Up to %1$d files with %2$s in total, e.g. PDF, images or Office documents."
 msgstr ""
 
 #. translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y
-#: src/Ui/EmailView.php:372
+#: src/Ui/EmailView.php:382
 msgid "F j, Y"
 msgstr ""
 
 #. translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i
-#: src/Ui/EmailView.php:374
+#: src/Ui/EmailView.php:384
 msgid "g:i a"
 msgstr ""

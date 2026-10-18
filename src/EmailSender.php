@@ -105,7 +105,8 @@ final class EmailSender
     {
         $sender = $message->senderId === null ? false : \get_userdata($message->senderId);
         $senderName = $sender instanceof WP_User ? $sender->display_name : \__('Former member', 'orchestra-email');
-        $senderEmail = $sender instanceof WP_User ? $sender->user_email : '';
+        // Emails queued before 0.3 have no reply address; their replies go to the sender.
+        $senderEmail = $message->replyTo ?? ($sender instanceof WP_User ? $sender->user_email : '');
         $blogName = \get_option('blogname');
         $siteName = \wp_specialchars_decode(\is_string($blogName) ? $blogName : '', ENT_QUOTES);
 
