@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Orchestra\Email;
 
+use Orchestra\Core\Database\Row;
 use wpdb;
 
 /**
@@ -15,7 +16,7 @@ use wpdb;
 final class EmailSchema
 {
     /** Increase whenever a table definition changes; dbDelta() applies the difference. */
-    public const VERSION = 1;
+    public const VERSION = 2;
 
     public const OPTION_VERSION = 'orchestra_core_schema_version';
 
@@ -33,6 +34,12 @@ final class EmailSchema
         return $this->wpdb->prefix . 'orchestra_core_email_queue';
     }
 
+    /** New in version 2, so named after this plugin. */
+    public function attachmentsTable(): string
+    {
+        return $this->wpdb->prefix . 'orchestra_email_attachments';
+    }
+
     public function migrateIfOutdated(): void
     {
         $installed = \get_option(self::OPTION_VERSION, 0);
@@ -40,7 +47,7 @@ final class EmailSchema
             return;
         }
 
-        $this->migrate();
+        $this->migrate(\is_numeric($installed) ? (int) $installed : 0);
     }
 
     /**
@@ -48,12 +55,13 @@ final class EmailSchema
      */
     public function drop(): void
     {
+        $this->wpdb->query("DROP TABLE IF EXISTS {$this->attachmentsTable()}");
         $this->wpdb->query("DROP TABLE IF EXISTS {$this->queueTable()}");
         $this->wpdb->query("DROP TABLE IF EXISTS {$this->messagesTable()}");
         \delete_option(self::OPTION_VERSION);
     }
 
-    private function migrate(): void
+    private function migrate(int $installed): void
     {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
@@ -86,6 +94,48 @@ final class EmailSchema
   KEY message_id (message_id)
 ) {$charsetCollate};");
 
+        // Attachments are kept until their email has been sent; message_id is NULL while writing.
+        \dbDelta("CREATE TABLE {$this->attachmentsTable()} (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  message_id bigint(20) unsigned DEFAULT NULL,
+  uploaded_by bigint(20) unsigned NOT NULL,
+  storage_name char(36) NOT NULL,
+  file_name varchar(255) NOT NULL,
+  mime_type varchar(100) NOT NULL,
+  size bigint(20) unsigned NOT NULL,
+  created_at datetime NOT NULL,
+  PRIMARY KEY  (id),
+  KEY message_id (message_id),
+  KEY uploaded_by (uploaded_by)
+) {$charsetCollate};");
+
+        if ($installed === 1) {
+            $this->convertPlainTextBodies();
+        }
+
         \update_option(self::OPTION_VERSION, self::VERSION, true);
+    }
+
+    /**
+     * Version 1 stored plain text; emails still being sent during the update get HTML, so that
+     * their line breaks are kept.
+     */
+    private function convertPlainTextBodies(): void
+    {
+        $rows = Row::all($this->wpdb->get_results(
+            $this->wpdb->prepare('SELECT id, body FROM %i WHERE body IS NOT NULL', $this->messagesTable()),
+            ARRAY_A
+        ));
+        foreach ($rows as $row) {
+            if (\is_string($row['body'] ?? null) && \is_numeric($row['id'] ?? null)) {
+                $this->wpdb->update(
+                    $this->messagesTable(),
+                    ['body' => EmailBody::fromPlainText($row['body'])],
+                    ['id' => (int) $row['id']],
+                    ['%s'],
+                    ['%d']
+                );
+            }
+        }
     }
 }

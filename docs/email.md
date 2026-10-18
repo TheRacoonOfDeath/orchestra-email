@@ -1,7 +1,7 @@
 # Email Service
 
-orchestra-email sends plain-text emails to recipient groups that the other Orchestra plugins
-define. It contains no business rules.
+orchestra-email sends emails with formatted text and attachments to recipient groups that the
+other Orchestra plugins define. It contains no business rules.
 
 The domain plugins register **recipient groups**, following the same pattern as capabilities.
 A group has an ID, a label, a category it is listed under (e.g. a project), a function that
@@ -17,7 +17,9 @@ The plugin provides:
 - the screen for writing an email: it lists only the groups the user may email, can be opened
   with groups preselected, e.g. from a project page, and shows the recipients before sending
 - resolving groups to recipients, without duplicates
-- sending one plain-text email per recipient, so recipients never see each other's addresses
+- formatting with WordPress's editor (bold, italic, underline, font size, a few colors, lists) and
+  attachments
+- sending one email per recipient, so recipients never see each other's addresses
 - sending in the background in batches with WP-Cron, to avoid timeouts and hosting limits
 - a log with metadata only (sender, groups, subject, number of recipients, time), deleted after
   12 months; the text is deleted as soon as the email has been sent
@@ -30,8 +32,11 @@ The Email page (`[orchestra_email]`) and **Email → Write Email** in wp-admin a
 who may email at least one group.
 
 1. Select one or more groups. Groups are listed by category, e.g. "Orchestra" or a project.
-2. Enter subject and message (plain text) and click **Review**.
-3. Check the recipients and click **Send**.
+2. Enter subject and message. The toolbar formats the selected text: bold, italic, underline, font
+   size, color, bulleted and numbered lists, and removing the formatting.
+3. Optionally choose attachments and click **Review**. Attachments chosen so far stay listed as
+   checkboxes; uncheck one to leave it out.
+4. Check the recipients, the message and the attachments and click **Send**.
 
 **Email → Sent Emails** shows the log: date, sender, subject, groups, number of recipients and
 whether all emails were sent.
@@ -78,14 +83,46 @@ if (\Orchestra\Email\Plugin::running()) {
 
 `Plugin::running()` is false while orchestra-email waits for orchestra-core 0.7 (see below).
 
+## Formatting
+
+The editor is WordPress's TinyMCE editor with a reduced toolbar. Without JavaScript it is a text
+field, and line breaks are kept.
+
+The text is stored and sent as HTML. Before that, `EmailBody::sanitize()` keeps only the tags of
+the editor (`p`, `br`, `strong`, `em`, `u`, `s`, `span`, lists, `blockquote` and links) and only
+the CSS properties `color`, `font-size` and `text-decoration`. Everything else, e.g. scripts,
+images or positioning, is removed. Each email also contains a plain-text version for email
+programs that do not show HTML.
+
+## Attachments
+
+- Up to 10 files with 10 MB in total per email. The size is also limited by PHP's upload limits
+  (`upload_max_filesize`, `post_max_size`); the email page shows the lower value. Filters:
+  `orchestra_email_max_attachment_size` (bytes) and `orchestra_email_allowed_file_types` (format
+  of WordPress's `upload_mimes`; default: PDF, JPEG, PNG, GIF, text, Word, Excel, PowerPoint and
+  OpenDocument). The type is detected from the content, so extension and content must match.
+- Files are uploaded when the email is reviewed and stored in a private directory under random
+  names, like the sheet music of orchestra-library: `ORCHESTRA_EMAIL_STORAGE_DIR` if defined in
+  `wp-config.php` (recommended, outside the web root), otherwise
+  `wp-content/uploads/orchestra-email-<random>/` with `.htaccess` (`Require all denied`). **nginx
+  ignores `.htaccess`**: define the constant or deny `^/wp-content/uploads/orchestra-email-` in the
+  server configuration.
+- Only the uploader can send their attachments. Recipients get them under their original names
+  (made unique, e.g. "Plan (2).pdf").
+- Attachments are deleted as soon as the email has been sent to all recipients, like the text.
+  Attachments of emails that were never sent are deleted after a day, and those of deleted users
+  right away. The table `orchestra_email_attachments` holds their metadata until then.
+- Every recipient gets the files with their own email: 10 MB to 50 people are 500 MB of mail.
+  Keep attachments small and check the limits of the host or mail provider.
+
 ## Sending
 
 - Recipients are resolved when the user clicks **Send** and stored in the queue table
   `orchestra_core_email_queue` (user IDs only).
 - The first batch is sent right away, the rest by the WP-Cron event `orchestra_core_email_send`
   every minute. A batch has 50 emails (filter `orchestra_email_batch_size`).
-- Every recipient gets their own email via `wp_mail()`, with **Reply-To** set to the sender and a
-  footer naming sender and groups. The **From** address is left to WordPress
+- Every recipient gets their own HTML email via `wp_mail()`, with **Reply-To** set to the sender, a
+  footer naming sender and groups, and the attachments. The **From** address is left to WordPress
   (`wordpress@your-domain`) or an SMTP plugin.
 - A failed delivery is retried twice in the next batches, then counted as failed in the log.
 - When all emails of a message are sent, its text is deleted. The log entry is deleted after

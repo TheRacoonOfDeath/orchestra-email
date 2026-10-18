@@ -8,6 +8,9 @@ use LogicException;
 use Orchestra\Core\Ui\Menu;
 use Orchestra\Core\Ui\MenuItem;
 use Orchestra\Email\Admin\ComposePage;
+use Orchestra\Email\Attachment\AttachmentRepository;
+use Orchestra\Email\Attachment\AttachmentService;
+use Orchestra\Email\Attachment\AttachmentStorage;
 use Orchestra\Email\Ui\EmailController;
 use Orchestra\Email\Ui\EmailShortcode;
 use Orchestra\Email\Ui\EmailView;
@@ -37,8 +40,12 @@ final class Plugin
     {
         $this->schema = new EmailSchema($wpdb);
         $log = new EmailLog($wpdb, $this->schema);
-        $this->sender = new EmailSender($log);
-        $this->email = new EmailService($log, $this->sender, new RecipientResolver());
+        $attachments = new AttachmentService(
+            new AttachmentRepository($wpdb, $this->schema),
+            AttachmentStorage::fromWordPress()
+        );
+        $this->sender = new EmailSender($log, $attachments);
+        $this->email = new EmailService($log, $this->sender, new RecipientResolver(), $attachments);
     }
 
     /**

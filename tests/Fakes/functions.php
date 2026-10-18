@@ -146,3 +146,28 @@ function wp_validate_redirect(string $location, string $fallback = ''): string
 
     return $host === null || $host === 'orchestra.example' ? $location : $fallback;
 }
+
+function esc_html(string $text): string
+{
+    return \htmlspecialchars($text, ENT_QUOTES);
+}
+
+/**
+ * Simplified: paragraphs at blank lines, line breaks within them.
+ */
+function wpautop(string $text): string
+{
+    $paragraphs = \preg_split('/\n\s*\n/', \trim($text)) ?: [];
+
+    return \implode('', \array_map(static fn (string $p): string => '<p>' . \nl2br(\trim($p), false) . "</p>\n", $paragraphs));
+}
+
+/**
+ * Simplified: keeps the allowed tags with their attributes, without checking the attributes.
+ *
+ * @param array<string, array<string, bool>> $allowedTags
+ */
+function wp_kses(string $html, array $allowedTags, array $protocols = []): string
+{
+    return \strip_tags($html, \array_keys($allowedTags));
+}

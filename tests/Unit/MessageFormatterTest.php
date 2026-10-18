@@ -12,7 +12,7 @@ final class MessageFormatterTest extends TestCase
     public function testRepliesGoToTheSender(): void
     {
         $this->assertSame(
-            ['Content-Type: text/plain; charset=UTF-8', 'Reply-To: "Olga Organizer" <olga@example.com>'],
+            ['Content-Type: text/html; charset=UTF-8', 'Reply-To: "Olga Organizer" <olga@example.com>'],
             MessageFormatter::headers('Olga Organizer', 'olga@example.com')
         );
     }
@@ -26,14 +26,16 @@ final class MessageFormatterTest extends TestCase
 
     public function testNoReplyToWithoutAValidAddress(): void
     {
-        $this->assertSame(['Content-Type: text/plain; charset=UTF-8'], MessageFormatter::headers('Former member', ''));
+        $this->assertSame(['Content-Type: text/html; charset=UTF-8'], MessageFormatter::headers('Former member', ''));
     }
 
     public function testAddsAFooterWithSenderAndGroups(): void
     {
-        $body = MessageFormatter::body('Hello', 'Olga', ['Members: All members', 'Spring: Accepted'], 'Orchestra');
+        $html = MessageFormatter::html('<p>Hello</p>', 'Olga <3', ['Members: All members'], 'Orchestra');
+        $text = MessageFormatter::text('<p>Hello <b>all</b></p>', 'Olga', ['Members: All members'], 'Orchestra');
 
-        $expected = "Hello\n\n-- \nSent by Olga via Orchestra to: Members: All members, Spring: Accepted\n";
-        $this->assertSame($expected, $body);
+        $this->assertStringContainsString('<p>Hello</p><hr', $html);
+        $this->assertStringContainsString('Sent by Olga &lt;3 via Orchestra to: Members: All members', $html);
+        $this->assertSame("Hello all\n\n-- \nSent by Olga via Orchestra to: Members: All members\n", $text);
     }
 }

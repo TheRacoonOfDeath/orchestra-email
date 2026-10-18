@@ -5,8 +5,9 @@ Part of the Orchestra plugin suite. Requires the [orchestra-core](https://github
 
 ## Features
 
-- The Email page `[orchestra_email]` (or **Email** in wp-admin): write a plain-text email to the
-  groups you may email, check the recipients and send it
+- The Email page `[orchestra_email]` (or **Email** in wp-admin): write an email to the groups you
+  may email, with bold, italic, underline, font sizes, colors, lists and attachments, check the
+  recipients and send it
 - Recipient groups registered by the other plugins: everyone, members, conductors and organizers
   (orchestra-members), participants and players of a project, piece or part (orchestra-projects)
 - One email per recipient, sent in the background in batches; replies go to the sender

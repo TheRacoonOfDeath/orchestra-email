@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Orchestra\Email;
 
 use Orchestra\Email\Admin\ComposePage;
+use Orchestra\Email\Attachment\AttachmentService;
 use Orchestra\Email\Ui\EmailShortcode;
 use Orchestra\Core\Ui\Pages;
 
 /**
  * The email service of the Orchestra suite. It contains no business rules: the domain plugins
- * register the recipient groups, this plugin sends one plain-text email per recipient and keeps a log.
+ * register the recipient groups, this plugin sends one email per recipient and keeps a log.
  *
  *     add_action(EmailService::REGISTER_GROUPS_ACTION, function (EmailGroupRegistry $groups): void {
  *         $groups->add(new RecipientGroup('orchestra_members_all', 'All members', 'Members', $resolver, 'cap'));
@@ -44,7 +45,13 @@ final class EmailService
         private readonly EmailLog $log,
         private readonly EmailSender $sender,
         private readonly RecipientResolver $resolver,
+        private readonly AttachmentService $attachments,
     ) {
+    }
+
+    public function attachments(): AttachmentService
+    {
+        return $this->attachments;
     }
 
     public function groups(): EmailGroupRegistry
@@ -86,6 +93,11 @@ final class EmailService
     public function validate(EmailDraft $draft, int $senderId): array
     {
         $errors = $draft->textErrors();
+        $attachments = $this->attachments->pending($draft->attachmentIds, $senderId);
+        if (\count($attachments) !== \count($draft->attachmentIds)) {
+            $errors[] = \__('An attachment is no longer available. Please add it again.', 'orchestra-email');
+        }
+        $errors = [...$errors, ...$this->attachments->errors($attachments)];
         if ($draft->groupIds === []) {
             $errors[] = \__('Please select at least one group.', 'orchestra-email');
             return $errors;
@@ -117,6 +129,7 @@ final class EmailService
         $labels = \array_map(static fn (RecipientGroup $g): string => self::fullLabel($g), $groups);
 
         $messageId = $this->log->create($senderId, $draft, $labels, $this->resolver->resolve($groups));
+        $this->attachments->attach($this->attachments->pending($draft->attachmentIds, $senderId), $messageId);
         $this->sender->sendBatch();
 
         return $messageId;
@@ -148,6 +161,7 @@ final class EmailService
     public function purgeLog(): void
     {
         $this->log->purgeBefore(\gmdate('Y-m-d H:i:s', \time() - $this->retentionDays() * DAY_IN_SECONDS));
+        $this->attachments->cleanUp();
     }
 
     /**
@@ -156,6 +170,7 @@ final class EmailService
     public function anonymizeUser(int $userId): void
     {
         $this->log->anonymizeSender($userId);
+        $this->attachments->deletePendingOf($userId);
     }
 
     public static function fullLabel(RecipientGroup $group): string

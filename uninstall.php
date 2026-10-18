@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Removes the email log, the queue and the options when the plugin is deleted.
+ * Removes the email log, the queue, the attachments and the options when the plugin is deleted.
  *
  * Deactivating the plugin keeps them.
  */
@@ -14,6 +14,7 @@ if (! defined('WP_UNINSTALL_PLUGIN')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use Orchestra\Email\Attachment\AttachmentStorage;
 use Orchestra\Email\EmailSchema;
 use Orchestra\Email\EmailSender;
 use Orchestra\Email\EmailService;
@@ -25,3 +26,5 @@ if ($orchestraEmailDatabase instanceof wpdb) {
 wp_clear_scheduled_hook(EmailSender::CRON_HOOK);
 wp_clear_scheduled_hook(EmailService::PURGE_CRON_HOOK);
 delete_option('orchestra_core_email_lock');
+AttachmentStorage::fromWordPress()->removeDirectory();
+delete_option(AttachmentStorage::OPTION_DIRECTORY_SUFFIX);

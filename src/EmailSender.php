@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Orchestra\Email;
 
+use Orchestra\Email\Attachment\AttachmentService;
+use PHPMailer\PHPMailer\PHPMailer;
 use WP_User;
 
 /**
@@ -29,7 +31,7 @@ final class EmailSender
     private const LOCK_OPTION = 'orchestra_core_email_lock';
     private const LOCK_TIMEOUT = 300;
 
-    public function __construct(private readonly EmailLog $log)
+    public function __construct(private readonly EmailLog $log, private readonly AttachmentService $attachments)
     {
     }
 
@@ -47,8 +49,10 @@ final class EmailSender
             $batchSize = \is_int($batchSize) && $batchSize > 0 ? $batchSize : self::DEFAULT_BATCH_SIZE;
 
             $messages = [];
+            $files = [];
             foreach ($this->log->nextRecipients($batchSize) as $entry) {
                 $messages[$entry['message_id']] ??= $this->log->find($entry['message_id']);
+                $files[$entry['message_id']] ??= $this->attachments->filesOf($entry['message_id']);
                 $message = $messages[$entry['message_id']];
                 $user = \get_userdata($entry['user_id']);
                 if ($message === null || $message->body === null || !$user instanceof WP_User) {
@@ -56,7 +60,7 @@ final class EmailSender
                     continue;
                 }
 
-                if ($this->deliver($message, $user)) {
+                if ($this->deliver($message, $user, $files[$message->id])) {
                     $this->log->markSent($entry['id'], $message->id);
                 } elseif ($entry['attempts'] + 1 >= self::MAX_ATTEMPTS) {
                     $this->log->markFailed($entry['id'], $message->id);
@@ -66,6 +70,7 @@ final class EmailSender
             }
 
             $this->log->completeFinished();
+            $this->attachments->cleanUp();
             if ($this->log->hasQueuedRecipients()) {
                 $this->schedule(self::INTERVAL);
             }
@@ -93,7 +98,10 @@ final class EmailSender
         }
     }
 
-    private function deliver(EmailMessage $message, WP_User $recipient): bool
+    /**
+     * @param array<string, string> $files file name => path
+     */
+    private function deliver(EmailMessage $message, WP_User $recipient, array $files): bool
     {
         $sender = $message->senderId === null ? false : \get_userdata($message->senderId);
         $senderName = $sender instanceof WP_User ? $sender->display_name : \__('Former member', 'orchestra-email');
@@ -101,12 +109,27 @@ final class EmailSender
         $blogName = \get_option('blogname');
         $siteName = \wp_specialchars_decode(\is_string($blogName) ? $blogName : '', ENT_QUOTES);
 
-        return \wp_mail(
-            $recipient->user_email,
-            $message->subject,
-            MessageFormatter::body((string) $message->body, $senderName, $message->groupLabels, $siteName),
-            MessageFormatter::headers($senderName, $senderEmail)
-        );
+        $body = (string) $message->body;
+        $text = MessageFormatter::text($body, $senderName, $message->groupLabels, $siteName);
+        // wp_mail() has no parameter for the plain-text version.
+        $addText = static function (mixed $mailer) use ($text): void {
+            if ($mailer instanceof PHPMailer) {
+                $mailer->AltBody = $text;
+            }
+        };
+
+        \add_action('phpmailer_init', $addText);
+        try {
+            return \wp_mail(
+                $recipient->user_email,
+                $message->subject,
+                MessageFormatter::html($body, $senderName, $message->groupLabels, $siteName),
+                MessageFormatter::headers($senderName, $senderEmail),
+                $files
+            );
+        } finally {
+            \remove_action('phpmailer_init', $addText);
+        }
     }
 
     /**
