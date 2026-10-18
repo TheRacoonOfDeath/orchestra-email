@@ -9,7 +9,7 @@ returns the recipients' user IDs and the capability required to email it, checke
 arguments (e.g. the project ID), so that rules per group can be added later.
 
 orchestra-members registers the global groups (everyone, all members, all conductors, all
-organizers), orchestra-projects the project and assignment-based groups. Currently conductors and
+organizers), orchestra-projects the groups of each project (accepted and pending participants). Currently conductors and
 organizers may email all groups.
 
 The plugin provides:

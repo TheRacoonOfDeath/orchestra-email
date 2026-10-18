@@ -9,7 +9,7 @@ Part of the Orchestra plugin suite. Requires the [orchestra-core](https://github
   may email, with bold, italic, underline, font sizes, colors, lists and attachments, check the
   recipients and send it
 - Recipient groups registered by the other plugins: everyone, members, conductors and organizers
-  (orchestra-members), participants and players of a project, piece or part (orchestra-projects)
+  (orchestra-members), accepted and pending participants of a project (orchestra-projects)
 - One email per recipient, sent in the background in batches; replies go to the sender
 - A log of the sent emails with metadata only, deleted after 12 months
 
