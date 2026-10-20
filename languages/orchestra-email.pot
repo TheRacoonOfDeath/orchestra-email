@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 11:22+0200\n"
+"POT-Creation-Date: 2026-10-20 14:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -125,7 +125,7 @@ msgid "Sent by %1$s via %2$s to: %3$s"
 msgstr ""
 
 #: src/Plugin.php:114
-msgid "Write to members, sections and project participants."
+msgid "Write to members and project participants."
 msgstr ""
 
 #: src/Plugin.php:158

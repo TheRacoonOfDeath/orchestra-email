@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 11:22+0200\n"
+"POT-Creation-Date: 2026-10-20 14:28+0200\n"
 "PO-Revision-Date: 2026-10-16 00:00+0000\n"
 "Last-Translator: Julian Nickerl\n"
 "Language-Team: German\n"
@@ -122,8 +122,8 @@ msgid "Sent by %1$s via %2$s to: %3$s"
 msgstr "Gesendet von %1$s über %2$s an: %3$s"
 
 #: src/Plugin.php:114
-msgid "Write to members, sections and project participants."
-msgstr "Schreibe an Mitglieder, Register und Projektteilnehmer."
+msgid "Write to members and project participants."
+msgstr "Schreibe an Mitglieder und Projektteilnehmer."
 
 #: src/Plugin.php:158
 msgid ""
@@ -140,7 +140,7 @@ msgstr ""
 
 #: src/Ui/EmailShortcode.php:34
 msgid "Please log in to write emails."
-msgstr "Bitte melde dich an, um E-Mails zu schreiben."
+msgstr "Bitte logge dich ein, um E-Mails zu schreiben."
 
 #: src/Ui/EmailShortcode.php:37
 msgid "You are not allowed to send emails."
@@ -267,8 +267,8 @@ msgid ""
 "You get a copy that names you as the sender and lists the groups. The others "
 "do not see the groups."
 msgstr ""
-"Du bekommst eine Kopie, die dich als Absender nennt und die Gruppen auflistet. "
-"Die anderen sehen die Gruppen nicht."
+"Du bekommst eine Kopie, die dich als Absender nennt und die Gruppen "
+"auflistet. Die anderen sehen die Gruppen nicht."
 
 #: src/Ui/EmailView.php:245 src/Ui/EmailView.php:339
 msgid "Attachments"
@@ -353,3 +353,6 @@ msgstr "H:i"
 #~ msgstr ""
 #~ "Reiner Text. Alle Empfänger erhalten eine eigene E-Mail; Antworten gehen "
 #~ "an deine E-Mail-Adresse."
+
+#~ msgid "Write to members, sections and project participants."
+#~ msgstr "Schreibe an Mitglieder, Register und Projektteilnehmer."

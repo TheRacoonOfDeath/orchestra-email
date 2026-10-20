@@ -111,7 +111,7 @@ final class Plugin
             $menu->add(new MenuItem(
                 EmailShortcode::TAG,
                 \__('Email', 'orchestra-email'),
-                \__('Write to members, sections and project participants.', 'orchestra-email'),
+                \__('Write to members and project participants.', 'orchestra-email'),
                 fn (int $userId): bool => $this->email->groups()->forUser($userId) !== [],
                 80
             ));

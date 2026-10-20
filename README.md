@@ -1,5 +1,5 @@
 # orchestra-email
-Emails to members, sections and project participants.
+Emails to members and project participants.
 
 Part of the Orchestra plugin suite. Requires the [orchestra-core](https://github.com/TheRacoonOfDeath/orchestra-core) plugin.
 
