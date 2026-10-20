@@ -48,13 +48,24 @@ final class EmailGroupRegistry
     }
 
     /**
-     * @return list<RecipientGroup> the groups the user may email
+     * @return list<RecipientGroup> the groups the user may email, listed or not
      */
     public function forUser(int $userId): array
     {
         return \array_values(\array_filter(
             $this->groups,
             static fn (RecipientGroup $group): bool => $group->canBeEmailedBy($userId)
+        ));
+    }
+
+    /**
+     * @return list<RecipientGroup> the listed groups the user may email, see {@see RecipientGroup::$listed}
+     */
+    public function listedForUser(int $userId): array
+    {
+        return \array_values(\array_filter(
+            $this->forUser($userId),
+            static fn (RecipientGroup $group): bool => $group->listed
         ));
     }
 }

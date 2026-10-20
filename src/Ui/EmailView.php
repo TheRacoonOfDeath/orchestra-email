@@ -9,6 +9,7 @@ use Orchestra\Email\Attachment\AttachmentService;
 use Orchestra\Email\EmailDraft;
 use Orchestra\Email\EmailMessage;
 use Orchestra\Email\EmailService;
+use Orchestra\Email\MessageFormatter;
 use Orchestra\Email\RecipientGroup;
 use Orchestra\Core\Ui\Form;
 use Orchestra\Core\Ui\Html;
@@ -155,7 +156,10 @@ final class EmailView
 
         $byCategory = [];
         foreach ($this->allowedGroups() as $group) {
-            $byCategory[$group->category][] = $group;
+            // Unlisted groups, e.g. a single member, appear only when a link selected them.
+            if ($group->listed || \in_array($group->id, $draft->groupIds, true)) {
+                $byCategory[$group->category][] = $group;
+            }
         }
         foreach ($byCategory as $category => $groups) {
             $selected = \array_filter(
@@ -240,7 +244,7 @@ final class EmailView
             [\__('Replies go to', 'orchestra-email'), \esc_html($draft->replyTo)],
             [\__('Subject', 'orchestra-email'), \esc_html($draft->subject)],
             // The body was sanitized by EmailDraft::fromForm() in this request.
-            [\__('Message', 'orchestra-email'), '<div class="orchestra-email-preview">' . $draft->body . '</div>'],
+            [\__('Message', 'orchestra-email'), self::preview($draft->body)],
             ...($attachments === [] ? [] : [[
                 \__('Attachments', 'orchestra-email'),
                 \esc_html(\implode(', ', \array_map(self::attachmentLabel(...), $attachments))),
@@ -421,5 +425,23 @@ final class EmailView
                 $groups
             )))
             : [];
+    }
+
+    /**
+     * The email as recipients will see it, in a frame of its own so that the page's styles do not
+     * change it. The frame runs no scripts. Recipients' emails have no footer; the sender's copy has
+     * one naming sender and groups.
+     */
+    private static function preview(string $body): string
+    {
+        return '<iframe class="orchestra-email-preview"'
+            . ' title="' . \esc_attr__('Preview of the email', 'orchestra-email') . '"'
+            . ' sandbox="" srcdoc="' . \esc_attr(MessageFormatter::html($body, null)) . '"'
+            . ' style="width:100%;min-height:16rem;border:1px solid var(--orchestra-border);'
+            . 'border-radius:var(--orchestra-radius-small);background:#fff"></iframe>'
+            . '<p class="orchestra-muted">' . \esc_html__(
+                'This is how the recipients see the email. Your own copy also names you and the groups.',
+                'orchestra-email'
+            ) . '</p>';
     }
 }

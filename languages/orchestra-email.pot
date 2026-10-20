@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 14:28+0200\n"
+"POT-Creation-Date: 2026-10-20 19:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,7 +98,7 @@ msgstr ""
 msgid "Please enter a valid email address for replies."
 msgstr ""
 
-#: src/EmailSender.php:107 src/Ui/EmailView.php:121
+#: src/EmailSender.php:107 src/Ui/EmailView.php:122
 msgid "Former member"
 msgstr ""
 
@@ -155,176 +155,186 @@ msgid "Write email"
 msgstr ""
 
 #. translators: %s: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:64
+#: src/Ui/EmailView.php:65
 #, php-format
 msgid "The attachments are too large. At most %s can be uploaded at once."
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:96
+#: src/Ui/EmailView.php:97
 #, php-format
 msgid "Your email has been sent to %d recipients."
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:98
+#: src/Ui/EmailView.php:99
 #, php-format
 msgid ""
 "Your email is being sent to %d recipients. Large groups take a few minutes."
 msgstr ""
 
-#: src/Ui/EmailView.php:108
+#: src/Ui/EmailView.php:109
 msgid "Sent"
 msgstr ""
 
 #. translators: 1: number of sent emails, 2: number of recipients
-#: src/Ui/EmailView.php:111
+#: src/Ui/EmailView.php:112
 #, php-format
 msgid "Sending (%1$d of %2$d)"
 msgstr ""
 
 #. translators: %d: number of emails that could not be sent
-#: src/Ui/EmailView.php:117
+#: src/Ui/EmailView.php:118
 #, php-format
 msgid "%d failed"
 msgstr ""
 
-#: src/Ui/EmailView.php:131
+#: src/Ui/EmailView.php:132
 msgid "Date"
 msgstr ""
 
-#: src/Ui/EmailView.php:132
+#: src/Ui/EmailView.php:133
 msgid "Sender"
 msgstr ""
 
-#: src/Ui/EmailView.php:133 src/Ui/EmailView.php:189 src/Ui/EmailView.php:241
+#: src/Ui/EmailView.php:134 src/Ui/EmailView.php:193 src/Ui/EmailView.php:245
 msgid "Subject"
 msgstr ""
 
-#: src/Ui/EmailView.php:134 src/Ui/EmailView.php:227
+#: src/Ui/EmailView.php:135 src/Ui/EmailView.php:231
 msgid "Groups"
 msgstr ""
 
-#: src/Ui/EmailView.php:135 src/Ui/EmailView.php:153 src/Ui/EmailView.php:229
+#: src/Ui/EmailView.php:136 src/Ui/EmailView.php:154 src/Ui/EmailView.php:233
 msgid "Recipients"
 msgstr ""
 
-#: src/Ui/EmailView.php:136
+#: src/Ui/EmailView.php:137
 msgid "Status"
 msgstr ""
 
-#: src/Ui/EmailView.php:139
+#: src/Ui/EmailView.php:140
 msgid "No emails have been sent yet."
 msgstr ""
 
 #. translators: %d: number of days
-#: src/Ui/EmailView.php:142
+#: src/Ui/EmailView.php:143
 #, php-format
 msgid ""
 "Texts are deleted once sent. The log shows who emailed which groups for %d "
 "days."
 msgstr ""
 
-#: src/Ui/EmailView.php:181 src/Ui/EmailView.php:240
+#: src/Ui/EmailView.php:185 src/Ui/EmailView.php:244
 msgid "Replies go to"
 msgstr ""
 
-#: src/Ui/EmailView.php:185
+#: src/Ui/EmailView.php:189
 msgid ""
 "Prefilled with your email address. Recipients' replies go to this address."
 msgstr ""
 
-#: src/Ui/EmailView.php:195 src/Ui/EmailView.php:243
+#: src/Ui/EmailView.php:199 src/Ui/EmailView.php:247
 msgid "Message"
 msgstr ""
 
-#: src/Ui/EmailView.php:197
+#: src/Ui/EmailView.php:201
 msgid "Every recipient gets their own email."
 msgstr ""
 
-#: src/Ui/EmailView.php:201
+#: src/Ui/EmailView.php:205
 msgid "Review"
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:231
+#: src/Ui/EmailView.php:235
 #, php-format
 msgid "%d person"
 msgid_plural "%d people"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Ui/EmailView.php:235
+#: src/Ui/EmailView.php:239
 msgid ""
 "You get a copy that names you as the sender and lists the groups. The others "
 "do not see the groups."
 msgstr ""
 
-#: src/Ui/EmailView.php:245 src/Ui/EmailView.php:339
+#: src/Ui/EmailView.php:249 src/Ui/EmailView.php:343
 msgid "Attachments"
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:262
+#: src/Ui/EmailView.php:266
 #, php-format
 msgid "Send the email to %d person now?"
 msgid_plural "Send the email to %d people now?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Ui/EmailView.php:270
+#: src/Ui/EmailView.php:274
 msgid "Send"
 msgstr ""
 
-#: src/Ui/EmailView.php:276
+#: src/Ui/EmailView.php:280
 msgid "Edit"
 msgstr ""
 
-#: src/Ui/EmailView.php:287
+#: src/Ui/EmailView.php:291
 msgid "Black"
 msgstr ""
 
-#: src/Ui/EmailView.php:288
+#: src/Ui/EmailView.php:292
 msgid "Gray"
 msgstr ""
 
-#: src/Ui/EmailView.php:289
+#: src/Ui/EmailView.php:293
 msgid "Red"
 msgstr ""
 
-#: src/Ui/EmailView.php:290
+#: src/Ui/EmailView.php:294
 msgid "Orange"
 msgstr ""
 
-#: src/Ui/EmailView.php:291
+#: src/Ui/EmailView.php:295
 msgid "Green"
 msgstr ""
 
-#: src/Ui/EmailView.php:292
+#: src/Ui/EmailView.php:296
 msgid "Blue"
 msgstr ""
 
-#: src/Ui/EmailView.php:293
+#: src/Ui/EmailView.php:297
 msgid "Purple"
 msgstr ""
 
-#: src/Ui/EmailView.php:354
+#: src/Ui/EmailView.php:358
 msgid "Add attachments"
 msgstr ""
 
 #. translators: 1: maximum number of files, 2: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:357
+#: src/Ui/EmailView.php:361
 #, php-format
 msgid ""
 "Up to %1$d files with %2$s in total, e.g. PDF, images or Office documents."
 msgstr ""
 
 #. translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y
-#: src/Ui/EmailView.php:387
+#: src/Ui/EmailView.php:391
 msgid "F j, Y"
 msgstr ""
 
 #. translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i
-#: src/Ui/EmailView.php:389
+#: src/Ui/EmailView.php:393
 msgid "g:i a"
+msgstr ""
+
+#: src/Ui/EmailView.php:438
+msgid "Preview of the email"
+msgstr ""
+
+#: src/Ui/EmailView.php:443
+msgid ""
+"This is how the recipients see the email. Your own copy also names you and "
+"the groups."
 msgstr ""

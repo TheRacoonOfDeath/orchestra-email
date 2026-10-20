@@ -40,7 +40,8 @@ who may email at least one group.
    size, color, bulleted and numbered lists, and removing the formatting.
 3. Optionally choose attachments and click **Review**. Attachments chosen so far stay listed as
    checkboxes; uncheck one to leave it out.
-4. Check the recipients, the message and the attachments and click **Send**. You always get a
+4. Check the recipients, the message (shown as the recipients will see it) and the attachments
+   and click **Send**. You always get a
    copy yourself, even if you are in none of the groups; it is included in the number of
    recipients.
 
@@ -70,6 +71,9 @@ add_action(EmailService::REGISTER_GROUPS_ACTION, function (EmailGroupRegistry $g
 });
 ```
 
+- A group with `listed: false` (the seventh argument, since 0.5) is not offered when writing an
+  email and does not make the Email area visible; it appears only when a link preselects it, e.g.
+  orchestra-members' group of a single member, used by "Write an email" on a member's profile.
 - The action is fired the first time groups are needed in a request, e.g. when the Email menu
   is built. Keep the registration cheap; compute recipients only in the closure.
 - The capability is checked with `user_can($userId, $capability, ...$capabilityArgs)`. Passing the

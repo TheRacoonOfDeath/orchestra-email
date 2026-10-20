@@ -20,6 +20,9 @@ final class RecipientGroup
      * @param string $capability Required to email the group, checked with `$capabilityArgs`.
      *        A meta capability allows rules per group, e.g. per project.
      * @param list<mixed> $capabilityArgs
+     * @param bool $listed Whether the group is offered when writing an email. Unlisted groups, e.g. a
+     *        single member, are only shown when a link preselects them ({@see EmailService::composeUrl()})
+     *        and do not make the Email area visible. Since orchestra-email 0.5.
      */
     public function __construct(
         public readonly string $id,
@@ -28,6 +31,7 @@ final class RecipientGroup
         private readonly Closure $recipients,
         public readonly string $capability,
         public readonly array $capabilityArgs = [],
+        public readonly bool $listed = true,
     ) {
     }
 

@@ -31,6 +31,28 @@ final class EmailGroupRegistryTest extends TestCase
         $this->assertNull($registry->find('unknown'));
     }
 
+    public function testUnlistedGroupsCanBeEmailedButAreNotListed(): void
+    {
+        $member = new RecipientGroup(
+            'orchestra_members_member_7',
+            'Mia',
+            'Members',
+            static fn (): array => [7],
+            'orchestra_members_email_member',
+            [7],
+            false
+        );
+        $registry = (new EmailGroupRegistry())
+            ->add(self::group('orchestra_members_all', 'orchestra_members_email_send'))
+            ->add($member);
+        WordPress::$userCapabilities[5] = ['orchestra_members_email_send', 'orchestra_members_email_member'];
+        WordPress::$userCapabilities[6] = ['orchestra_members_email_member'];
+
+        $this->assertSame(['orchestra_members_all', 'orchestra_members_member_7'], self::ids($registry->forUser(5)));
+        $this->assertSame(['orchestra_members_all'], self::ids($registry->listedForUser(5)));
+        $this->assertSame([], $registry->listedForUser(6), 'an unlisted group alone shows no Email area');
+    }
+
     public function testRejectsInvalidIds(): void
     {
         $this->expectException(InvalidArgumentException::class);
