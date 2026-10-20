@@ -31,11 +31,21 @@ final class MessageFormatterTest extends TestCase
 
     public function testAddsAFooterWithSenderAndGroups(): void
     {
-        $html = MessageFormatter::html('<p>Hello</p>', 'Olga <3', ['Members: All members'], 'Orchestra');
-        $text = MessageFormatter::text('<p>Hello <b>all</b></p>', 'Olga', ['Members: All members'], 'Orchestra');
+        $footer = MessageFormatter::footer('Olga <3', ['Members: All members'], 'Orchestra');
+        $html = MessageFormatter::html('<p>Hello</p>', $footer);
+        $text = MessageFormatter::text('<p>Hello <b>all</b></p>', $footer);
 
         $this->assertStringContainsString('<p>Hello</p><hr', $html);
         $this->assertStringContainsString('Sent by Olga &lt;3 via Orchestra to: Members: All members', $html);
-        $this->assertSame("Hello all\n\n-- \nSent by Olga via Orchestra to: Members: All members\n", $text);
+        $this->assertSame("Hello all\n\n-- \nSent by Olga <3 via Orchestra to: Members: All members\n", $text);
+    }
+
+    public function testEmailsWithoutFooterContainOnlyTheMessage(): void
+    {
+        $html = MessageFormatter::html('<p>Hello</p>', null);
+
+        $this->assertStringContainsString('<p>Hello</p></body>', $html);
+        $this->assertStringNotContainsString('<hr', $html);
+        $this->assertSame("Hello all\n", MessageFormatter::text('<p>Hello <b>all</b></p>', null));
     }
 }

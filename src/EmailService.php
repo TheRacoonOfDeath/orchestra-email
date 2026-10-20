@@ -88,6 +88,16 @@ final class EmailService
     }
 
     /**
+     * @param list<string> $groupIds
+     * @return list<int> the user IDs that would receive the email: the recipients of the groups and
+     *     the sender, who always gets a copy
+     */
+    public function recipientsWithSender(array $groupIds, int $senderId): array
+    {
+        return $this->resolver->withSender($this->recipients($groupIds), $senderId);
+    }
+
+    /**
      * @return list<string> error messages; empty if the sender may send the draft
      */
     public function validate(EmailDraft $draft, int $senderId): array
@@ -118,7 +128,8 @@ final class EmailService
     }
 
     /**
-     * Queues the email for all current recipients of its groups and sends the first batch.
+     * Queues the email for all current recipients of its groups and the sender, and sends the first
+     * batch.
      * The draft must be valid, see {@see validate()}.
      *
      * @return int the ID of the log entry
@@ -128,7 +139,8 @@ final class EmailService
         $groups = $this->findGroups($draft->groupIds);
         $labels = \array_map(static fn (RecipientGroup $g): string => self::fullLabel($g), $groups);
 
-        $messageId = $this->log->create($senderId, $draft, $labels, $this->resolver->resolve($groups));
+        $recipientIds = $this->resolver->withSender($this->resolver->resolve($groups), $senderId);
+        $messageId = $this->log->create($senderId, $draft, $labels, $recipientIds);
         $this->attachments->attach($this->attachments->pending($draft->attachmentIds, $senderId), $messageId);
         $this->sender->sendBatch();
 

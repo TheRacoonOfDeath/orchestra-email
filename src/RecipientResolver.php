@@ -42,6 +42,23 @@ final class RecipientResolver
         return \array_values(\array_unique($recipients));
     }
 
+    /**
+     * Adds the sender, who always gets a copy, unless they are a recipient already or have no valid
+     * email address.
+     *
+     * @param list<int> $recipients
+     * @return list<int> user IDs, ascending
+     */
+    public function withSender(array $recipients, int $senderId): array
+    {
+        if (!\in_array($senderId, $recipients, true) && self::hasEmail($senderId)) {
+            $recipients[] = $senderId;
+            \sort($recipients);
+        }
+
+        return $recipients;
+    }
+
     private static function hasEmail(int $userId): bool
     {
         $user = \get_userdata($userId);

@@ -111,7 +111,10 @@ final class EmailSender
         $siteName = \wp_specialchars_decode(\is_string($blogName) ? $blogName : '', ENT_QUOTES);
 
         $body = (string) $message->body;
-        $text = MessageFormatter::text($body, $senderName, $message->groupLabels, $siteName);
+        $footer = $message->senderId !== null && $recipient->ID === $message->senderId
+            ? MessageFormatter::footer($senderName, $message->groupLabels, $siteName)
+            : null;
+        $text = MessageFormatter::text($body, $footer);
         // wp_mail() has no parameter for the plain-text version.
         $addText = static function (mixed $mailer) use ($text): void {
             if ($mailer instanceof PHPMailer) {
@@ -124,7 +127,7 @@ final class EmailSender
             return \wp_mail(
                 $recipient->user_email,
                 $message->subject,
-                MessageFormatter::html($body, $senderName, $message->groupLabels, $siteName),
+                MessageFormatter::html($body, $footer),
                 MessageFormatter::headers($senderName, $senderEmail),
                 $files
             );

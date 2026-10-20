@@ -6,34 +6,34 @@ namespace Orchestra\Email;
 
 /**
  * Builds the email sent to each recipient: HTML, with a plain-text version for email programs
- * that do not show HTML, and the headers.
+ * that do not show HTML, and the headers. Only the sender's copy has a footer naming sender and
+ * groups, so that recipients do not learn which groups were emailed.
  */
 final class MessageFormatter
 {
     /**
      * @param string $body HTML, see {@see EmailBody}
-     * @param list<string> $groupLabels
+     * @param string|null $footer see {@see footer()}; null for an email without footer
      */
-    public static function html(string $body, string $senderName, array $groupLabels, string $siteName): string
+    public static function html(string $body, ?string $footer): string
     {
         // Inline styles: many email programs ignore style sheets.
         return '<!DOCTYPE html><html><head><meta charset="UTF-8"></head>'
             . '<body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:16px;'
             . 'line-height:1.5;color:#1d1d1f">'
             . $body
-            . '<hr style="border:0;border-top:1px solid #d0d0d0;margin:24px 0 8px">'
-            . '<p style="margin:0;font-size:13px;color:#6b6b6b">'
-            . \htmlspecialchars(self::footer($senderName, $groupLabels, $siteName), ENT_QUOTES) . '</p>'
+            . ($footer === null ? '' : '<hr style="border:0;border-top:1px solid #d0d0d0;margin:24px 0 8px">'
+                . '<p style="margin:0;font-size:13px;color:#6b6b6b">' . \htmlspecialchars($footer, ENT_QUOTES) . '</p>')
             . '</body></html>';
     }
 
     /**
      * @param string $body HTML, see {@see EmailBody}
-     * @param list<string> $groupLabels
+     * @param string|null $footer see {@see footer()}; null for an email without footer
      */
-    public static function text(string $body, string $senderName, array $groupLabels, string $siteName): string
+    public static function text(string $body, ?string $footer): string
     {
-        return EmailBody::plainText($body) . "\n\n-- \n" . self::footer($senderName, $groupLabels, $siteName) . "\n";
+        return EmailBody::plainText($body) . ($footer === null ? '' : "\n\n-- \n" . $footer) . "\n";
     }
 
     /**
@@ -56,7 +56,7 @@ final class MessageFormatter
     /**
      * @param list<string> $groupLabels
      */
-    private static function footer(string $senderName, array $groupLabels, string $siteName): string
+    public static function footer(string $senderName, array $groupLabels, string $siteName): string
     {
         return \sprintf(
             /* translators: 1: sender name, 2: site name, 3: list of recipient groups */

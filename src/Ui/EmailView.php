@@ -204,7 +204,7 @@ final class EmailView
 
     private function review(EmailDraft $draft, string $pageUrl, string $logUrl): string
     {
-        $recipients = $this->email->recipients($draft->groupIds);
+        $recipients = $this->email->recipientsWithSender($draft->groupIds, \get_current_user_id());
         $attachments = $this->email->attachments()->pending($draft->attachmentIds, \get_current_user_id());
         $labels = [];
         foreach ($draft->groupIds as $id) {
@@ -230,7 +230,12 @@ final class EmailView
                 /* translators: %d: number of recipients */
                 '<strong>' . \esc_html(\sprintf(\_n('%d person', '%d people', $count, 'orchestra-email'), $count))
                     . '</strong><br><span class="orchestra-muted">' . \esc_html(\implode(', ', $names))
-                    . ($count > self::MAX_LISTED_RECIPIENTS ? ', …' : '') . '</span>',
+                    . ($count > self::MAX_LISTED_RECIPIENTS ? ', …' : '') . '</span><br>'
+                    . '<span class="orchestra-muted">' . \esc_html__(
+                        'You get a copy that names you as the sender and lists the groups. The others do not see the'
+                            . ' groups.',
+                        'orchestra-email'
+                    ) . '</span>',
             ],
             [\__('Replies go to', 'orchestra-email'), \esc_html($draft->replyTo)],
             [\__('Subject', 'orchestra-email'), \esc_html($draft->subject)],

@@ -19,7 +19,8 @@ The plugin provides:
 - resolving groups to recipients, without duplicates
 - formatting with WordPress's editor (bold, italic, underline, font size, a few colors, lists) and
   attachments
-- sending one email per recipient, so recipients never see each other's addresses
+- sending one email per recipient, so recipients never see each other's addresses, and a copy to
+  the sender
 - sending in the background in batches with WP-Cron, to avoid timeouts and hosting limits
 - a reply address, prefilled with the sender's email address and changeable, e.g. to a shared
   mailbox
@@ -39,7 +40,9 @@ who may email at least one group.
    size, color, bulleted and numbered lists, and removing the formatting.
 3. Optionally choose attachments and click **Review**. Attachments chosen so far stay listed as
    checkboxes; uncheck one to leave it out.
-4. Check the recipients, the message and the attachments and click **Send**.
+4. Check the recipients, the message and the attachments and click **Send**. You always get a
+   copy yourself, even if you are in none of the groups; it is included in the number of
+   recipients.
 
 **Email → Sent Emails** shows the log: date, sender, subject, groups, number of recipients and
 whether all emails were sent.
@@ -121,12 +124,14 @@ programs that do not show HTML.
 ## Sending
 
 - Recipients are resolved when the user clicks **Send** and stored in the queue table
-  `orchestra_core_email_queue` (user IDs only).
+  `orchestra_core_email_queue` (user IDs only). The sender is added once, unless they have no
+  valid email address; the log's number of recipients includes them.
 - The first batch is sent right away, the rest by the WP-Cron event `orchestra_core_email_send`
   every minute. A batch has 50 emails (filter `orchestra_email_batch_size`).
 - Every recipient gets their own HTML email via `wp_mail()`, with **Reply-To** set to the address
-  chosen when writing (by default the sender's; emails queued before 0.3 use the sender's), a
-  footer naming sender and groups, and the attachments. The **From** address is left to WordPress
+  chosen when writing (by default the sender's; emails queued before 0.3 use the sender's) and the
+  attachments. Only the sender's copy has a footer naming sender and groups; the other recipients
+  do not learn which groups were emailed. The **From** address is left to WordPress
   (`wordpress@your-domain`) or an SMTP plugin.
 - A failed delivery is retried twice in the next batches, then counted as failed in the log.
 - When all emails of a message are sent, its text and reply address are deleted. The log entry is deleted after

@@ -49,6 +49,15 @@ final class RecipientResolverTest extends TestCase
         $this->assertSame(['orchestra_test_a', 'orchestra_test_b'], $seenGroups);
     }
 
+    public function testTheSenderAlwaysGetsOneCopy(): void
+    {
+        $resolver = new RecipientResolver();
+
+        $this->assertSame([1, 2, 3], $resolver->withSender([1, 3], 2));
+        $this->assertSame([1, 3], $resolver->withSender([1, 3], 3));
+        $this->assertSame([1], $resolver->withSender([1], 5), 'not without a valid address');
+    }
+
     public function testFiltersCannotAddRecipients(): void
     {
         WordPress::$filters[EmailService::RECIPIENTS_FILTER] = static fn (array $ids): array => [...$ids, 4, 'x'];
