@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Orchestra\Email;
 
 use LogicException;
+use Orchestra\Core\Files\PrivateDirectoryCheck;
 use Orchestra\Core\Ui\Menu;
 use Orchestra\Core\Ui\MenuItem;
 use Orchestra\Email\Admin\ComposePage;
@@ -35,15 +36,14 @@ final class Plugin
     private readonly EmailSchema $schema;
     private readonly EmailSender $sender;
     private readonly EmailService $email;
+    private readonly AttachmentStorage $storage;
 
     private function __construct(private readonly string $pluginFile, wpdb $wpdb)
     {
         $this->schema = new EmailSchema($wpdb);
         $log = new EmailLog($wpdb, $this->schema);
-        $attachments = new AttachmentService(
-            new AttachmentRepository($wpdb, $this->schema),
-            AttachmentStorage::fromWordPress()
-        );
+        $this->storage = AttachmentStorage::fromWordPress();
+        $attachments = new AttachmentService(new AttachmentRepository($wpdb, $this->schema), $this->storage);
         $this->sender = new EmailSender($log, $attachments);
         $this->email = new EmailService($log, $this->sender, new RecipientResolver(), $attachments);
     }
@@ -116,6 +116,21 @@ final class Plugin
                 80
             ));
         });
+        // The check of private directories exists since orchestra-core 0.13.
+        if (\class_exists(PrivateDirectoryCheck::class)) {
+            \add_action(PrivateDirectoryCheck::REGISTER_ACTION, function (PrivateDirectoryCheck $check): void {
+                $check->add(
+                    'orchestra_email',
+                    \__('Email attachments', 'orchestra-email'),
+                    'ORCHESTRA_EMAIL_STORAGE_DIR',
+                    function (): string {
+                        $this->storage->ensureDirectory();
+
+                        return $this->storage->directory();
+                    }
+                );
+            });
+        }
         if (\is_admin()) {
             (new ComposePage($view))->register();
         }

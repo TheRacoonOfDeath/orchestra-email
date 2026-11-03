@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 19:07+0200\n"
+"POT-Creation-Date: 2026-11-03 18:15+0100\n"
 "PO-Revision-Date: 2026-10-16 00:00+0000\n"
 "Last-Translator: Julian Nickerl\n"
 "Language-Team: German\n"
@@ -125,7 +125,11 @@ msgstr "Gesendet von %1$s über %2$s an: %3$s"
 msgid "Write to members and project participants."
 msgstr "Schreibe an Mitglieder und Projektteilnehmer."
 
-#: src/Plugin.php:158
+#: src/Plugin.php:124
+msgid "Email attachments"
+msgstr "E-Mail-Anhänge"
+
+#: src/Plugin.php:173
 msgid ""
 "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
 "Core; until then, Orchestra Core sends the emails itself."
@@ -133,7 +137,7 @@ msgstr ""
 "Orchestra Email braucht Orchestra Core 0.7 oder neuer. Bitte aktualisiere "
 "Orchestra Core; bis dahin verschickt Orchestra Core die E-Mails selbst."
 
-#: src/Plugin.php:162
+#: src/Plugin.php:177
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
 msgstr ""
 "Orchestra Email braucht Orchestra Core. Bitte installiere und aktiviere es."
@@ -349,7 +353,9 @@ msgstr "Vorschau der E-Mail"
 msgid ""
 "This is how the recipients see the email. Your own copy also names you and "
 "the groups."
-msgstr "So sehen die Empfänger die E-Mail. Deine eigene Kopie nennt zusätzlich dich und die Gruppen."
+msgstr ""
+"So sehen die Empfänger die E-Mail. Deine eigene Kopie nennt zusätzlich dich "
+"und die Gruppen."
 
 #~ msgid ""
 #~ "Every recipient gets their own email; replies go to your email address."

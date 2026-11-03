@@ -117,6 +117,8 @@ programs that do not show HTML.
   `wp-content/uploads/orchestra-email-<random>/` with `.htaccess` (`Require all denied`). **nginx
   ignores `.htaccess`**: define the constant or deny `^/wp-content/uploads/orchestra-email-` in the
   server configuration.
+  Since orchestra-core 0.13, **Tools → Site Health** and a notice for administrators warn
+  while the directory can be downloaded.
 - Only the uploader can send their attachments. Recipients get them under their original names
   (made unique, e.g. "Plan (2).pdf").
 - Attachments are deleted as soon as the email has been sent to all recipients, like the text.

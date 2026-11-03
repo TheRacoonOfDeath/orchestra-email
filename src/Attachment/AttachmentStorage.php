@@ -110,7 +110,7 @@ final class AttachmentStorage
         \rmdir($this->directory());
     }
 
-    private function ensureDirectory(): void
+    public function ensureDirectory(): void
     {
         if (!\is_dir($this->directory()) && !\wp_mkdir_p($this->directory())) {
             throw new RuntimeException('Could not create the attachment storage directory.');

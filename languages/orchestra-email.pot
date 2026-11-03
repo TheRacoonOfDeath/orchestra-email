@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 19:07+0200\n"
+"POT-Creation-Date: 2026-11-03 18:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -128,13 +128,17 @@ msgstr ""
 msgid "Write to members and project participants."
 msgstr ""
 
-#: src/Plugin.php:158
+#: src/Plugin.php:124
+msgid "Email attachments"
+msgstr ""
+
+#: src/Plugin.php:173
 msgid ""
 "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
 "Core; until then, Orchestra Core sends the emails itself."
 msgstr ""
 
-#: src/Plugin.php:162
+#: src/Plugin.php:177
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
 msgstr ""
 
