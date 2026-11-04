@@ -26,7 +26,8 @@ final class EmailService
     public const REGISTER_GROUPS_ACTION = 'orchestra_email_register_groups';
 
     /**
-     * Filters the user IDs of every email: `(list<int> $userIds, list<string> $groupIds)`.
+     * Filters the user IDs of every email: `(list<int> $userIds, list<string> $groupIds)`, when it
+     * is sent and again before each batch is delivered, then without group IDs.
      * orchestra-members removes inactive members.
      */
     public const RECIPIENTS_FILTER = 'orchestra_email_recipients';

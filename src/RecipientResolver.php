@@ -59,6 +59,30 @@ final class RecipientResolver
         return $recipients;
     }
 
+    /**
+     * The queued recipients who may still receive an email when it is delivered, e.g. not members
+     * set inactive since it was sent. The filter gets no group IDs here, since the queue does not
+     * keep them.
+     *
+     * @param list<int> $userIds
+     * @return list<int> user IDs, ascending
+     */
+    public function stillReceiving(array $userIds): array
+    {
+        $ids = \array_flip($userIds);
+        $filtered = \apply_filters(EmailService::RECIPIENTS_FILTER, \array_values(\array_unique($userIds)), []);
+
+        $recipients = [];
+        foreach (\is_array($filtered) ? $filtered : [] as $id) {
+            if (\is_int($id) && isset($ids[$id])) {
+                $recipients[$id] = $id;
+            }
+        }
+        \sort($recipients);
+
+        return $recipients;
+    }
+
     private static function hasEmail(int $userId): bool
     {
         $user = \get_userdata($userId);

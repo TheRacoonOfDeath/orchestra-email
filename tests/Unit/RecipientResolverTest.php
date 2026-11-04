@@ -65,6 +65,20 @@ final class RecipientResolverTest extends TestCase
         $this->assertSame([1], (new RecipientResolver())->resolve([self::group('a', [1])]));
     }
 
+    public function testQueuedRecipientsAreCheckedAgainWithoutGroups(): void
+    {
+        $seenGroups = null;
+        $filter = static function (array $ids, array $groups) use (&$seenGroups): array {
+            $seenGroups = $groups;
+
+            return [...\array_diff($ids, [2]), 4, 'x'];
+        };
+        WordPress::$filters[EmailService::RECIPIENTS_FILTER] = $filter;
+
+        $this->assertSame([1, 3], (new RecipientResolver())->stillReceiving([3, 2, 1, 3]));
+        $this->assertSame([], $seenGroups);
+    }
+
     /**
      * @param list<int> $ids
      */

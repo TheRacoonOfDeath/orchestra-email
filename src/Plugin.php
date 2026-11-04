@@ -44,8 +44,9 @@ final class Plugin
         $log = new EmailLog($wpdb, $this->schema);
         $this->storage = AttachmentStorage::fromWordPress();
         $attachments = new AttachmentService(new AttachmentRepository($wpdb, $this->schema), $this->storage);
-        $this->sender = new EmailSender($log, $attachments);
-        $this->email = new EmailService($log, $this->sender, new RecipientResolver(), $attachments);
+        $resolver = new RecipientResolver();
+        $this->sender = new EmailSender($log, $attachments, $resolver);
+        $this->email = new EmailService($log, $this->sender, $resolver, $attachments);
     }
 
     /**

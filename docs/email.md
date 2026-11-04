@@ -81,7 +81,9 @@ add_action(EmailService::REGISTER_GROUPS_ACTION, function (EmailGroupRegistry $g
   emailing their own section, without changing this plugin.
 - `EmailService::REGISTER_GROUPS_ACTION` is `orchestra_email_register_groups`.
 - `EmailService::RECIPIENTS_FILTER` (`orchestra_email_recipients`) receives the user IDs and the
-  group IDs of every email. Plugins may remove recipients; they cannot add any.
+  group IDs of every email. Plugins may remove recipients; they cannot add any. Since 0.7 it runs
+  again before every batch is delivered, with the queued user IDs and no group IDs (the queue does
+  not keep them), so that e.g. members set inactive after an email was sent do not receive it.
 
 Other plugins link to the compose screen with groups preselected:
 
@@ -134,6 +136,9 @@ programs that do not show HTML.
   valid email address; the log's number of recipients includes them.
 - The first batch is sent right away, the rest by the WP-Cron event `orchestra_core_email_send`
   every minute. A batch has 50 emails (filter `orchestra_email_batch_size`).
+- Right before each batch, its recipients pass `orchestra_email_recipients` again. Those a plugin
+  removes (orchestra-members: members set inactive in the meantime, also the sender) are left out
+  silently: they leave the queue and the log's number of recipients, and do not count as failed.
 - Every recipient gets their own HTML email via `wp_mail()`, with **Reply-To** set to the address
   chosen when writing (by default the sender's; emails queued before 0.3 use the sender's) and the
   attachments. Only the sender's copy has a footer naming sender and groups; the other recipients

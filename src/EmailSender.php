@@ -31,8 +31,11 @@ final class EmailSender
     private const LOCK_OPTION = 'orchestra_core_email_lock';
     private const LOCK_TIMEOUT = 300;
 
-    public function __construct(private readonly EmailLog $log, private readonly AttachmentService $attachments)
-    {
+    public function __construct(
+        private readonly EmailLog $log,
+        private readonly AttachmentService $attachments,
+        private readonly RecipientResolver $resolver,
+    ) {
     }
 
     /**
@@ -48,9 +51,16 @@ final class EmailSender
             $batchSize = \apply_filters(self::BATCH_SIZE_FILTER, self::DEFAULT_BATCH_SIZE);
             $batchSize = \is_int($batchSize) && $batchSize > 0 ? $batchSize : self::DEFAULT_BATCH_SIZE;
 
+            $entries = $this->log->nextRecipients($batchSize);
+            // Recipients are checked again, e.g. members set inactive since the email was sent.
+            $receiving = \array_flip($this->resolver->stillReceiving(\array_column($entries, 'user_id')));
             $messages = [];
             $files = [];
-            foreach ($this->log->nextRecipients($batchSize) as $entry) {
+            foreach ($entries as $entry) {
+                if (!isset($receiving[$entry['user_id']])) {
+                    $this->log->drop($entry['id'], $entry['message_id']);
+                    continue;
+                }
                 $messages[$entry['message_id']] ??= $this->log->find($entry['message_id']);
                 $files[$entry['message_id']] ??= $this->attachments->filesOf($entry['message_id']);
                 $message = $messages[$entry['message_id']];

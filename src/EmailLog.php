@@ -117,6 +117,19 @@ final class EmailLog
         ));
     }
 
+    /**
+     * Removes a recipient who may no longer receive the email from the queue and from its count.
+     */
+    public function drop(int $queueId, int $messageId): void
+    {
+        $this->wpdb->delete($this->schema->queueTable(), ['id' => $queueId]);
+        $this->execute($this->wpdb->prepare(
+            'UPDATE %i SET recipients = recipients - 1 WHERE id = %d AND recipients > 0',
+            $this->schema->messagesTable(),
+            $messageId
+        ));
+    }
+
     public function retryLater(int $queueId): void
     {
         $this->execute($this->wpdb->prepare(
