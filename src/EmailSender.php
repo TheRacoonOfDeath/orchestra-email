@@ -52,25 +52,38 @@ final class EmailSender
             $batchSize = \is_int($batchSize) && $batchSize > 0 ? $batchSize : self::DEFAULT_BATCH_SIZE;
 
             $entries = $this->log->nextRecipients($batchSize);
-            // Recipients are checked again, e.g. members set inactive since the email was sent.
-            $receiving = \array_flip($this->resolver->stillReceiving(\array_column($entries, 'user_id')));
             $messages = [];
+            $userIds = [];
+            foreach ($entries as $entry) {
+                $message = $messages[$entry['message_id']] ??= $this->log->find($entry['message_id']);
+                $userIds[$message->automatic ?? ''][] = $entry['user_id'];
+            }
+            // Recipients are checked again, e.g. members set inactive since the email was sent.
+            $receiving = [];
+            foreach ($userIds as $automaticId => $ids) {
+                $automaticId = (string) $automaticId;
+                $receiving[$automaticId] = \array_flip(
+                    $this->resolver->stillReceiving($ids, $automaticId === '' ? null : $automaticId)
+                );
+            }
+
             $files = [];
             foreach ($entries as $entry) {
-                if (!isset($receiving[$entry['user_id']])) {
+                $message = $messages[$entry['message_id']];
+                if (!isset($receiving[$message->automatic ?? ''][$entry['user_id']])) {
                     $this->log->drop($entry['id'], $entry['message_id']);
                     continue;
                 }
-                $messages[$entry['message_id']] ??= $this->log->find($entry['message_id']);
                 $files[$entry['message_id']] ??= $this->attachments->filesOf($entry['message_id']);
-                $message = $messages[$entry['message_id']];
                 $user = \get_userdata($entry['user_id']);
-                if ($message === null || $message->body === null || !$user instanceof WP_User) {
+                $body = $entry['body'] ?? $message?->body;
+                if ($message === null || $body === null || !$user instanceof WP_User) {
                     $this->log->markFailed($entry['id'], $entry['message_id']);
                     continue;
                 }
 
-                if ($this->deliver($message, $user, $files[$message->id])) {
+                $subject = $entry['subject'] ?? $message->subject;
+                if ($this->deliver($message, $subject, $body, $user, $files[$message->id])) {
                     $this->log->markSent($entry['id'], $message->id);
                 } elseif ($entry['attempts'] + 1 >= self::MAX_ATTEMPTS) {
                     $this->log->markFailed($entry['id'], $message->id);
@@ -111,8 +124,13 @@ final class EmailSender
     /**
      * @param array<string, string> $files file name => path
      */
-    private function deliver(EmailMessage $message, WP_User $recipient, array $files): bool
-    {
+    private function deliver(
+        EmailMessage $message,
+        string $subject,
+        string $body,
+        WP_User $recipient,
+        array $files,
+    ): bool {
         $sender = $message->senderId === null ? false : \get_userdata($message->senderId);
         $senderName = $sender instanceof WP_User ? $sender->display_name : \__('Former member', 'orchestra-email');
         // Emails queued before 0.3 have no reply address; their replies go to the sender.
@@ -120,8 +138,8 @@ final class EmailSender
         $blogName = \get_option('blogname');
         $siteName = \wp_specialchars_decode(\is_string($blogName) ? $blogName : '', ENT_QUOTES);
 
-        $body = (string) $message->body;
-        $footer = $message->senderId !== null && $recipient->ID === $message->senderId
+        // Automatic emails have no copy for the sender, so no footer either.
+        $footer = $message->automatic === null && $message->senderId !== null && $recipient->ID === $message->senderId
             ? MessageFormatter::footer($senderName, $message->groupLabels, $siteName)
             : null;
         $text = MessageFormatter::text($body, $footer);
@@ -136,7 +154,7 @@ final class EmailSender
         try {
             return \wp_mail(
                 $recipient->user_email,
-                $message->subject,
+                $subject,
                 MessageFormatter::html($body, $footer),
                 MessageFormatter::headers($senderName, $senderEmail),
                 $files

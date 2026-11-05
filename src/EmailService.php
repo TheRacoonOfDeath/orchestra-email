@@ -6,6 +6,10 @@ namespace Orchestra\Email;
 
 use Orchestra\Email\Admin\ComposePage;
 use Orchestra\Email\Attachment\AttachmentService;
+use Orchestra\Email\Automatic\AutomaticEmail;
+use Orchestra\Email\Automatic\AutomaticEmailRegistry;
+use Orchestra\Email\Automatic\TemplateRenderer;
+use Orchestra\Email\Automatic\TemplateStore;
 use Orchestra\Email\Ui\EmailShortcode;
 use Orchestra\Core\Ui\Pages;
 
@@ -32,6 +36,16 @@ final class EmailService
      */
     public const RECIPIENTS_FILTER = 'orchestra_email_recipients';
 
+    /** Fired with the {@see AutomaticEmailRegistry} the first time automatic emails are needed in a request. */
+    public const REGISTER_AUTOMATIC_ACTION = 'orchestra_email_register_automatic';
+
+    /**
+     * Filters the user IDs of every automatic email after {@see RECIPIENTS_FILTER}:
+     * `(list<int> $userIds, string $automaticId)`, when it is sent and before each batch is delivered.
+     * orchestra-members removes members who opted out of automatic emails.
+     */
+    public const AUTOMATIC_RECIPIENTS_FILTER = 'orchestra_email_automatic_recipients';
+
     /** Filters the number of days the log is kept. */
     public const RETENTION_FILTER = 'orchestra_email_log_retention_days';
 
@@ -42,11 +56,14 @@ final class EmailService
 
     private ?EmailGroupRegistry $registry = null;
 
+    private ?AutomaticEmailRegistry $automatic = null;
+
     public function __construct(
         private readonly EmailLog $log,
         private readonly EmailSender $sender,
         private readonly RecipientResolver $resolver,
         private readonly AttachmentService $attachments,
+        private readonly TemplateStore $templates = new TemplateStore(),
     ) {
     }
 
@@ -63,6 +80,93 @@ final class EmailService
         }
 
         return $this->registry;
+    }
+
+    public function automaticEmails(): AutomaticEmailRegistry
+    {
+        if ($this->automatic === null) {
+            $this->automatic = new AutomaticEmailRegistry();
+            \do_action(self::REGISTER_AUTOMATIC_ACTION, $this->automatic);
+        }
+
+        return $this->automatic;
+    }
+
+    /**
+     * The current text of an automatic email: the organizers' or the default.
+     *
+     * @return array{subject: string, body: string, custom: bool} body as HTML; custom is false for the default
+     */
+    public function automaticTemplate(AutomaticEmail $email): array
+    {
+        return $this->templates->template($email);
+    }
+
+    /**
+     * Stores the organizers' text of an automatic email. The caller checks
+     * {@see AutomaticEmail::canBeEditedBy()}.
+     *
+     * @param string $body HTML; sanitized here
+     */
+    public function saveAutomaticTemplate(AutomaticEmail $email, string $subject, string $body): void
+    {
+        $this->templates->save($email->id, $subject, EmailBody::sanitize($body));
+    }
+
+    /**
+     * Goes back to the default text of an automatic email.
+     */
+    public function resetAutomaticTemplate(AutomaticEmail $email): void
+    {
+        $this->templates->reset($email->id);
+    }
+
+    /**
+     * Who of the users would receive the automatic email, e.g. without inactive members and members
+     * who opted out of automatic emails.
+     *
+     * @param list<int> $userIds
+     * @return list<int> user IDs, ascending
+     */
+    public function automaticRecipients(string $automaticId, array $userIds): array
+    {
+        return $this->resolver->automatic($automaticId, $userIds);
+    }
+
+    /**
+     * Sends an automatic email with its current text, filled for each user with their own values,
+     * and sends the first batch. Users who do not receive automatic emails (see
+     * {@see automaticRecipients()}) are left out. Replies go to the sender, who gets no copy.
+     *
+     * @param array<int, array<string, string>> $values user ID => placeholder name => HTML, escaped by the caller
+     * @param string $logLabel shown as the group in the log, e.g. "Changed parts: Spring Concert"
+     * @return int the number of users the email is sent to
+     */
+    public function sendAutomatic(string $automaticId, int $senderId, string $logLabel, array $values): int
+    {
+        $email = $this->automaticEmails()->find($automaticId);
+        if ($email === null) {
+            return 0;
+        }
+
+        $template = $this->templates->template($email);
+        $emails = [];
+        foreach ($this->resolver->automatic($automaticId, \array_keys($values)) as $userId) {
+            $emails[$userId] = [
+                'subject' => TemplateRenderer::subject($template['subject'], $values[$userId]),
+                'body' => TemplateRenderer::body($template['body'], $values[$userId]),
+            ];
+        }
+        if ($emails === []) {
+            return 0;
+        }
+
+        $sender = \get_userdata($senderId);
+        $replyTo = $sender === false ? '' : $sender->user_email;
+        $this->log->createAutomatic($automaticId, $senderId, $logLabel, $replyTo, $emails);
+        $this->sender->sendBatch();
+
+        return \count($emails);
     }
 
     /**

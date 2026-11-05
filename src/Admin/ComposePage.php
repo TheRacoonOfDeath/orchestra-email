@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Orchestra\Email\Admin;
 
+use Orchestra\Email\Ui\AutomaticEmailsView;
 use Orchestra\Email\Ui\EmailShortcode;
 use Orchestra\Email\Ui\EmailView;
 use Orchestra\Core\Ui\Html;
@@ -17,9 +18,12 @@ final class ComposePage
 {
     public const SLUG = 'orchestra-email';
     public const LOG_SLUG = 'orchestra-email-log';
+    public const AUTOMATIC_SLUG = 'orchestra-email-automatic';
 
-    public function __construct(private readonly EmailView $view)
-    {
+    public function __construct(
+        private readonly EmailView $view,
+        private readonly AutomaticEmailsView $automatic,
+    ) {
     }
 
     public function register(): void
@@ -45,20 +49,48 @@ final class ComposePage
      */
     public function addMenu(): void
     {
-        if ($this->view->allowedGroups() === []) {
+        $groups = $this->view->allowedGroups() !== [];
+        $automatic = $this->automatic->editable() !== [];
+        if (!$groups && !$automatic) {
             return;
         }
 
-        // Access is decided by the groups; `read` only keeps logged-out users away.
+        // Access is decided by the groups and automatic emails; `read` only keeps logged-out users away.
+        $first = $groups ? self::SLUG : self::AUTOMATIC_SLUG;
         \add_menu_page(
             \__('Email', 'orchestra-email'),
             \__('Email', 'orchestra-email'),
             'read',
-            self::SLUG,
-            [$this, 'renderCompose'],
+            $first,
+            $groups ? [$this, 'renderCompose'] : [$this, 'renderAutomatic'],
             'dashicons-email',
             73
         );
+        if ($groups) {
+            $this->addGroupScreens();
+        }
+        if ($automatic) {
+            \add_submenu_page(
+                $first,
+                \__('Automatic Emails', 'orchestra-email'),
+                \__('Automatic Emails', 'orchestra-email'),
+                'read',
+                self::AUTOMATIC_SLUG,
+                [$this, 'renderAutomatic']
+            );
+        }
+    }
+
+    /**
+     * @internal Submenu page callback.
+     */
+    public function renderAutomatic(): void
+    {
+        echo Html::adminPage(\__('Automatic Emails', 'orchestra-email'), $this->automatic->render()); // escaped
+    }
+
+    private function addGroupScreens(): void
+    {
         \add_submenu_page(
             self::SLUG,
             \__('Write Email', 'orchestra-email'),

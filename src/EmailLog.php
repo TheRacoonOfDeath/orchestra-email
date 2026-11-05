@@ -49,6 +49,50 @@ final class EmailLog
         return $messageId;
     }
 
+    /**
+     * An automatic email: every recipient has their own subject and body.
+     *
+     * @param array<int, array{subject: string, body: string}> $emails user ID => their email
+     */
+    public function createAutomatic(
+        string $automaticId,
+        int $senderId,
+        string $logLabel,
+        string $replyTo,
+        array $emails,
+    ): int {
+        $first = \reset($emails);
+        $inserted = $this->wpdb->insert($this->schema->messagesTable(), [
+            'sender_id' => $senderId,
+            'subject' => \mb_substr($first === false ? $logLabel : $first['subject'], 0, 255),
+            'reply_to' => $replyTo,
+            'group_labels' => (string) \wp_json_encode([$logLabel]),
+            'recipients' => \count($emails),
+            'status' => EmailMessage::STATUS_SENDING,
+            'created_at' => \current_time('mysql', true),
+            'automatic' => $automaticId,
+        ], ['%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s']);
+        if ($inserted === false) {
+            throw new RuntimeException('Could not store the email: ' . $this->wpdb->last_error);
+        }
+        $messageId = (int) $this->wpdb->insert_id;
+
+        foreach ($emails as $userId => $email) {
+            $this->wpdb->insert(
+                $this->schema->queueTable(),
+                [
+                    'message_id' => $messageId,
+                    'user_id' => $userId,
+                    'subject' => \mb_substr($email['subject'], 0, 255),
+                    'body' => $email['body'],
+                ],
+                ['%d', '%d', '%s', '%s']
+            );
+        }
+
+        return $messageId;
+    }
+
     public function find(int $messageId): ?EmailMessage
     {
         $row = $this->wpdb->get_row(
@@ -73,7 +117,8 @@ final class EmailLog
     }
 
     /**
-     * @return list<array{id: int, message_id: int, user_id: int, attempts: int}> oldest first
+     * @return list<array{id: int, message_id: int, user_id: int, attempts: int, subject: ?string, body: ?string}>
+     *     oldest first; subject and body only for automatic emails
      */
     public function nextRecipients(int $limit): array
     {
@@ -87,6 +132,8 @@ final class EmailLog
             'message_id' => Row::int($row, 'message_id'),
             'user_id' => Row::int($row, 'user_id'),
             'attempts' => Row::int($row, 'attempts'),
+            'subject' => ($row['subject'] ?? null) === null ? null : Row::string($row, 'subject'),
+            'body' => ($row['body'] ?? null) === null ? null : Row::string($row, 'body'),
         ], $rows);
     }
 
@@ -216,6 +263,7 @@ final class EmailLog
             Row::string($row, 'status'),
             Row::string($row, 'created_at'),
             ($row['reply_to'] ?? null) === null ? null : Row::string($row, 'reply_to'),
+            ($row['automatic'] ?? null) === null ? null : Row::string($row, 'automatic'),
         );
     }
 }

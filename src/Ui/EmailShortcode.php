@@ -9,15 +9,17 @@ use Orchestra\Core\Ui\Redirect;
 
 /**
  * `[orchestra_email]`: write emails to groups and see the log, on a normal page.
- * `?orchestra_view=log` shows the log.
+ * `?orchestra_view=log` shows the log, `?orchestra_view=automatic` the automatic emails.
  */
 final class EmailShortcode
 {
     public const TAG = 'orchestra_email';
     private const VIEW_PARAMETER = 'orchestra_view';
 
-    public function __construct(private readonly EmailView $view)
-    {
+    public function __construct(
+        private readonly EmailView $view,
+        private readonly AutomaticEmailsView $automatic,
+    ) {
     }
 
     public function register(): void
@@ -33,22 +35,37 @@ final class EmailShortcode
         if (!\is_user_logged_in()) {
             return Html::loginRequired(\__('Please log in to write emails.', 'orchestra-email'));
         }
-        if ($this->view->allowedGroups() === []) {
+        $tabs = [];
+        if ($this->view->allowedGroups() !== []) {
+            $tabs['compose'] = \__('Write email', 'orchestra-email');
+            $tabs['log'] = \__('Sent emails', 'orchestra-email');
+        }
+        if ($this->automatic->editable() !== []) {
+            $tabs['automatic'] = \__('Automatic emails', 'orchestra-email');
+        }
+        if ($tabs === []) {
             return Html::notAllowed(\__('You are not allowed to send emails.', 'orchestra-email'));
         }
 
         $pageUrl = \remove_query_arg([self::VIEW_PARAMETER, 'sent', 'groups'], Redirect::currentUrl());
         $logUrl = \add_query_arg(self::VIEW_PARAMETER, 'log', $pageUrl);
-        $showLog = ($_GET[self::VIEW_PARAMETER] ?? '') === 'log';
+        $requested = \is_string($_GET[self::VIEW_PARAMETER] ?? null) ? $_GET[self::VIEW_PARAMETER] : 'compose';
+        $current = isset($tabs[$requested]) ? $requested : \array_key_first($tabs);
 
-        $tabs = Html::tabs(
-            ['compose' => \__('Write email', 'orchestra-email'), 'log' => \__('Sent emails', 'orchestra-email')],
-            $showLog ? 'log' : 'compose',
-            static fn (string $tab): string => $tab === 'log' ? $logUrl : $pageUrl
+        $nav = Html::tabs(
+            $tabs,
+            $current,
+            static fn (string $tab): string => $tab === 'compose'
+                ? $pageUrl
+                : \add_query_arg(self::VIEW_PARAMETER, $tab, $pageUrl)
         );
         $sent = \absint(\is_string($_GET['sent'] ?? null) ? $_GET['sent'] : 0);
 
-        return Html::page($tabs . ($showLog ? $this->view->log($sent) : $this->view->compose($pageUrl, $logUrl)));
+        return Html::page($nav . match ($current) {
+            'log' => $this->view->log($sent),
+            'automatic' => $this->automatic->render(),
+            default => $this->view->compose($pageUrl, $logUrl),
+        });
     }
 
     /**

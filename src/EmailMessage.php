@@ -31,6 +31,8 @@ final class EmailMessage
         public readonly string $createdAt,
         /** The address replies go to; null once the email has been sent, and for emails before 0.3 */
         public readonly ?string $replyTo = null,
+        /** The ID of the automatic email, see {@see \Orchestra\Email\Automatic\AutomaticEmail}; null if written */
+        public readonly ?string $automatic = null,
     ) {
     }
 }

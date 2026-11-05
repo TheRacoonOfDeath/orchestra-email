@@ -118,6 +118,51 @@ if (\Orchestra\Email\Plugin::running()) {
 
 `Plugin::running()` is false while orchestra-email waits for orchestra-core 0.7 (see below).
 
+## Automatic emails
+
+Since 0.10, plugins can register emails that the system sends by itself, e.g. orchestra-projects'
+email to members whose parts changed. Every automatic email has a default text with placeholders;
+the users with the email's capability (orchestra-projects: organizers) change it on the tab
+**Automatic emails** of the Email page (**Email → Automatic Emails** in wp-admin), and **Reset to
+default** goes back to the default. Changed texts are stored in the option
+`orchestra_email_automatic_templates`; an email without one uses its default, which follows the
+Orchestra language.
+
+```php
+use Orchestra\Email\Automatic\AutomaticEmail;
+use Orchestra\Email\Automatic\AutomaticEmailRegistry;
+use Orchestra\Email\EmailService;
+
+add_action(EmailService::REGISTER_AUTOMATIC_ACTION, function (AutomaticEmailRegistry $emails): void {
+    $emails->add(new AutomaticEmail(
+        'orchestra_projects_changed_parts',            // orchestra_{plugin}_{name}, unique
+        __('Changed parts', 'orchestra-projects'),     // label
+        __('Sent when …', 'orchestra-projects'),       // description, shown above the text
+        'orchestra_projects_notification_edit',        // capability required to change the text
+        __('Your parts in {project} have changed', 'orchestra-projects'), // default subject
+        '<p>…{changes}…</p>',                          // default body (HTML)
+        ['project' => __('The name of the project', 'orchestra-projects'), 'changes' => '…'],
+    ));
+});
+
+$email = \Orchestra\Email\Plugin::instance()->email();
+$email->sendAutomatic('orchestra_projects_changed_parts', $senderId, $logLabel, [
+    $userId => ['project' => esc_html($title), 'changes' => $changesHtml], // HTML, escaped by the caller
+]);
+```
+
+- `sendAutomatic()` fills the placeholders for each recipient (unknown ones stay as they are),
+  queues one email per recipient with their own subject and body, and returns the number of
+  recipients. The subject is plain text: tags of the values are removed. Replies go to the sender,
+  who gets no copy. The log lists it with `$logLabel` as its group.
+- Recipients pass `orchestra_email_recipients` (with the automatic email's ID as the only group)
+  and then `EmailService::AUTOMATIC_RECIPIENTS_FILTER` (`orchestra_email_automatic_recipients`,
+  `(list<int> $userIds, string $automaticId)`), also again before each batch.
+  orchestra-members removes inactive members and members who turned automatic emails off in their
+  profile. `automaticRecipients($id, $userIds)` tells beforehand who would receive it.
+- The queue keeps the subject and body of each recipient (columns `subject`, `body`, schema 4) until
+  their email has been sent; the log entry has the ID of the automatic email (`automatic`).
+
 ## Formatting
 
 The editor is WordPress's TinyMCE editor with a reduced toolbar. Without JavaScript it is a text

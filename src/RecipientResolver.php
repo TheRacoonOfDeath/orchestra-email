@@ -60,17 +60,42 @@ final class RecipientResolver
     }
 
     /**
-     * The queued recipients who may still receive an email when it is delivered, e.g. not members
-     * set inactive since it was sent. The filter gets no group IDs here, since the queue does not
-     * keep them.
+     * The users who receive an automatic email: filtered like every email (with the automatic
+     * email's ID as the only group), then by {@see EmailService::AUTOMATIC_RECIPIENTS_FILTER}, e.g.
+     * without members who opted out; only users with a valid email address.
      *
      * @param list<int> $userIds
      * @return list<int> user IDs, ascending
      */
-    public function stillReceiving(array $userIds): array
+    public function automatic(string $automaticId, array $userIds): array
+    {
+        return \array_values(\array_filter(
+            $this->stillReceiving($userIds, $automaticId, [$automaticId]),
+            self::hasEmail(...)
+        ));
+    }
+
+    /**
+     * The queued recipients who may still receive an email when it is delivered, e.g. not members
+     * set inactive or opted out of automatic emails since it was sent. The filter gets no group IDs
+     * for written emails, since the queue does not keep them.
+     *
+     * @param list<int> $userIds
+     * @param string|null $automaticId the automatic email, or null for a written one
+     * @param list<string> $groupIds
+     * @return list<int> user IDs, ascending
+     */
+    public function stillReceiving(array $userIds, ?string $automaticId = null, array $groupIds = []): array
     {
         $ids = \array_flip($userIds);
-        $filtered = \apply_filters(EmailService::RECIPIENTS_FILTER, \array_values(\array_unique($userIds)), []);
+        $filtered = \apply_filters(EmailService::RECIPIENTS_FILTER, \array_values(\array_unique($userIds)), $groupIds);
+        if ($automaticId !== null) {
+            $filtered = \apply_filters(
+                EmailService::AUTOMATIC_RECIPIENTS_FILTER,
+                \is_array($filtered) ? $filtered : [],
+                $automaticId
+            );
+        }
 
         $recipients = [];
         foreach (\is_array($filtered) ? $filtered : [] as $id) {

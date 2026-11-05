@@ -12,6 +12,8 @@ use Orchestra\Email\Admin\ComposePage;
 use Orchestra\Email\Attachment\AttachmentRepository;
 use Orchestra\Email\Attachment\AttachmentService;
 use Orchestra\Email\Attachment\AttachmentStorage;
+use Orchestra\Email\Ui\AutomaticEmailsController;
+use Orchestra\Email\Ui\AutomaticEmailsView;
 use Orchestra\Email\Ui\EmailController;
 use Orchestra\Email\Ui\EmailShortcode;
 use Orchestra\Email\Ui\EmailView;
@@ -106,14 +108,17 @@ final class Plugin
         \add_action('deleted_user', [$this->email, 'anonymizeUser']);
 
         $view = new EmailView($this->email);
+        $automatic = new AutomaticEmailsView($this->email);
         (new EmailController($this->email))->register();
-        (new EmailShortcode($view))->register();
+        (new AutomaticEmailsController($this->email))->register();
+        (new EmailShortcode($view, $automatic))->register();
         \add_action(Menu::REGISTER_ACTION, function (Menu $menu): void {
             $menu->add(new MenuItem(
                 EmailShortcode::TAG,
                 \__('Email', 'orchestra-email'),
                 \__('Write to members and project participants.', 'orchestra-email'),
-                fn (int $userId): bool => $this->email->groups()->listedForUser($userId) !== [],
+                fn (int $userId): bool => $this->email->groups()->listedForUser($userId) !== []
+                    || $this->email->automaticEmails()->editableBy($userId) !== [],
                 80
             ));
         });
@@ -133,7 +138,7 @@ final class Plugin
             });
         }
         if (\is_admin()) {
-            (new ComposePage($view))->register();
+            (new ComposePage($view, $automatic))->register();
         }
     }
 
