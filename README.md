@@ -10,7 +10,7 @@ Part of the Orchestra plugin suite. Requires the [orchestra-core](https://github
   recipients and send it
 - Recipient groups registered by the other plugins: everyone, members, conductors and organizers
   (orchestra-members), accepted and pending participants of a project (orchestra-projects)
-- Addresses of the selected groups to copy into BCC, or a link that opens your own email app with them
+- Instead of sending through the platform, write with your own email app: open it with the selected groups in BCC, or copy their addresses
 - One email per recipient, sent in the background in batches; replies go to the sender or an address they choose
 - A log of the sent emails with metadata only, deleted after 12 months
 

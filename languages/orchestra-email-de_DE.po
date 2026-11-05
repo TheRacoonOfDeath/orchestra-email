@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 16:20+0100\n"
+"POT-Creation-Date: 2026-11-05 18:49+0100\n"
 "PO-Revision-Date: 2026-10-16 00:00+0000\n"
 "Last-Translator: Julian Nickerl\n"
 "Language-Team: German\n"
@@ -95,7 +95,7 @@ msgstr "Die Nachricht darf höchstens %d Zeichen lang sein."
 msgid "Please enter a valid email address for replies."
 msgstr "Bitte gib eine gültige E-Mail-Adresse für Antworten ein."
 
-#: src/EmailSender.php:117 src/Ui/EmailView.php:132
+#: src/EmailSender.php:117 src/Ui/EmailView.php:143
 msgid "Former member"
 msgstr "Ehemaliges Mitglied"
 
@@ -159,7 +159,7 @@ msgid "Write email"
 msgstr "E-Mail schreiben"
 
 #. translators: %s: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:66
+#: src/Ui/EmailView.php:71
 #, php-format
 msgid "The attachments are too large. At most %s can be uploaded at once."
 msgstr ""
@@ -167,13 +167,13 @@ msgstr ""
 "werden."
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:107
+#: src/Ui/EmailView.php:118
 #, php-format
 msgid "Your email has been sent to %d recipients."
 msgstr "Deine E-Mail wurde an %d Empfänger gesendet."
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:109
+#: src/Ui/EmailView.php:120
 #, php-format
 msgid ""
 "Your email is being sent to %d recipients. Large groups take a few minutes."
@@ -181,52 +181,52 @@ msgstr ""
 "Deine E-Mail wird an %d Empfänger gesendet. Bei großen Gruppen dauert das "
 "einige Minuten."
 
-#: src/Ui/EmailView.php:119
+#: src/Ui/EmailView.php:130
 msgid "Sent"
 msgstr "Gesendet"
 
 #. translators: 1: number of sent emails, 2: number of recipients
-#: src/Ui/EmailView.php:122
+#: src/Ui/EmailView.php:133
 #, php-format
 msgid "Sending (%1$d of %2$d)"
 msgstr "Wird gesendet (%1$d von %2$d)"
 
 #. translators: %d: number of emails that could not be sent
-#: src/Ui/EmailView.php:128
+#: src/Ui/EmailView.php:139
 #, php-format
 msgid "%d failed"
 msgstr "%d fehlgeschlagen"
 
-#: src/Ui/EmailView.php:142
+#: src/Ui/EmailView.php:153
 msgid "Date"
 msgstr "Datum"
 
-#: src/Ui/EmailView.php:143
+#: src/Ui/EmailView.php:154
 msgid "Sender"
 msgstr "Absender"
 
-#: src/Ui/EmailView.php:144 src/Ui/EmailView.php:203 src/Ui/EmailView.php:306
+#: src/Ui/EmailView.php:155 src/Ui/EmailView.php:259 src/Ui/EmailView.php:385
 msgid "Subject"
 msgstr "Betreff"
 
-#: src/Ui/EmailView.php:145 src/Ui/EmailView.php:292
+#: src/Ui/EmailView.php:156 src/Ui/EmailView.php:371
 msgid "Groups"
 msgstr "Gruppen"
 
-#: src/Ui/EmailView.php:146 src/Ui/EmailView.php:164 src/Ui/EmailView.php:294
+#: src/Ui/EmailView.php:157 src/Ui/EmailView.php:182 src/Ui/EmailView.php:373
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: src/Ui/EmailView.php:147
+#: src/Ui/EmailView.php:158
 msgid "Status"
 msgstr "Status"
 
-#: src/Ui/EmailView.php:150
+#: src/Ui/EmailView.php:161
 msgid "No emails have been sent yet."
 msgstr "Es wurden noch keine E-Mails gesendet."
 
 #. translators: %d: number of days
-#: src/Ui/EmailView.php:153
+#: src/Ui/EmailView.php:164
 #, php-format
 msgid ""
 "Texts are deleted once sent. The log shows who emailed which groups for %d "
@@ -235,38 +235,73 @@ msgstr ""
 "Die Texte werden nach dem Versand gelöscht. Das Protokoll zeigt %d Tage "
 "lang, wer welchen Gruppen geschrieben hat."
 
-#: src/Ui/EmailView.php:195 src/Ui/EmailView.php:305
+#: src/Ui/EmailView.php:218
+msgid "Select the recipients, then choose how to write to them."
+msgstr "Wähle die Empfänger aus und dann, wie du ihnen schreiben möchtest."
+
+#: src/Ui/EmailView.php:231
+msgid "Write in my email app"
+msgstr "In meinem E-Mail-Programm schreiben"
+
+#: src/Ui/EmailView.php:232 src/Ui/EmailView.php:317
+msgid "Copy addresses"
+msgstr "Adressen kopieren"
+
+#: src/Ui/EmailView.php:233
+msgid "Write and send here"
+msgstr "Hier schreiben und senden"
+
+#: src/Ui/EmailView.php:236
+msgid "How do you want to write?"
+msgstr "Wie möchtest du schreiben?"
+
+#: src/Ui/EmailView.php:251 src/Ui/EmailView.php:384
 msgid "Replies go to"
 msgstr "Antworten an"
 
-#: src/Ui/EmailView.php:199
+#: src/Ui/EmailView.php:255
 msgid ""
 "Prefilled with your email address. Recipients' replies go to this address."
 msgstr ""
 "Vorausgefüllt mit deiner E-Mail-Adresse. Antworten der Empfänger gehen an "
 "diese Adresse."
 
-#: src/Ui/EmailView.php:209 src/Ui/EmailView.php:308
+#: src/Ui/EmailView.php:265 src/Ui/EmailView.php:387
 msgid "Message"
 msgstr "Nachricht"
 
-#: src/Ui/EmailView.php:211
+#: src/Ui/EmailView.php:267
 msgid "Every recipient gets their own email."
 msgstr "Alle Empfänger bekommen eine eigene E-Mail."
 
-#: src/Ui/EmailView.php:216
+#: src/Ui/EmailView.php:272
 msgid "Review"
 msgstr "Prüfen"
 
-#: src/Ui/EmailView.php:218
-msgid "Addresses for my email app"
-msgstr "Adressen für mein E-Mail-Programm"
+#: src/Ui/EmailView.php:288
+#, php-format
+msgid ""
+"With %1$d characters, the link is longer than some email apps accept (about "
+"%2$d, e.g. Outlook on Windows). They may leave out recipients or not open at "
+"all. Copying the addresses is the safer option."
+msgstr ""
+"Mit %1$d Zeichen ist der Link länger, als manche E-Mail-Programme annehmen "
+"(etwa %2$d, z. B. Outlook unter Windows). Sie lassen dann Empfänger weg oder "
+"öffnen sich gar nicht. Sicherer ist es, die Adressen zu kopieren."
 
-#: src/Ui/EmailView.php:232
-msgid "Addresses for your own email app"
-msgstr "Adressen für dein eigenes E-Mail-Programm"
+#: src/Ui/EmailView.php:299
+msgid "Open my email app"
+msgstr "Mein E-Mail-Programm öffnen"
 
-#: src/Ui/EmailView.php:236
+#: src/Ui/EmailView.php:312
+msgid "Email addresses"
+msgstr "E-Mail-Adressen"
+
+#: src/Ui/EmailView.php:317
+msgid "Copied"
+msgstr "Kopiert"
+
+#: src/Ui/EmailView.php:326
 #, php-format
 msgid ""
 "%d address. Put it in BCC, so that recipients do not see each other's "
@@ -274,42 +309,22 @@ msgid ""
 msgid_plural ""
 "%d addresses. Put them in BCC, so that recipients do not see each other's "
 "addresses."
-msgstr[0] "%d Adresse. Setze sie ins BCC, damit die Empfänger die Adressen der anderen nicht sehen."
-msgstr[1] "%d Adressen. Setze sie ins BCC, damit die Empfänger die Adressen der anderen nicht sehen."
-
-#: src/Ui/EmailView.php:244
-msgid "Email addresses"
-msgstr "E-Mail-Adressen"
-
-#: src/Ui/EmailView.php:250
-#, php-format
-msgid ""
-"With %1$d characters, the link is longer than some email apps accept (about "
-"%2$d, e.g. Outlook on Windows). They may leave out recipients or not open at "
-"all. Copying the addresses is the safer option."
-msgstr "Mit %1$d Zeichen ist der Link länger, als manche E-Mail-Programme annehmen (etwa %2$d, z. B. Outlook unter Windows). Sie lassen dann Empfänger weg oder öffnen sich gar nicht. Sicherer ist es, die Adressen zu kopieren."
-
-#: src/Ui/EmailView.php:263
-msgid "Copied"
-msgstr "Kopiert"
-
-#: src/Ui/EmailView.php:263
-msgid "Copy addresses"
-msgstr "Adressen kopieren"
-
-#: src/Ui/EmailView.php:266
-msgid "Open in my email app"
-msgstr "In meinem E-Mail-Programm öffnen"
+msgstr[0] ""
+"%d Adresse. Setze sie ins BCC, damit die Empfänger die Adressen der anderen "
+"nicht sehen."
+msgstr[1] ""
+"%d Adressen. Setze sie ins BCC, damit die Empfänger die Adressen der anderen "
+"nicht sehen."
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:296
+#: src/Ui/EmailView.php:375
 #, php-format
 msgid "%d person"
 msgid_plural "%d people"
 msgstr[0] "%d Person"
 msgstr[1] "%d Personen"
 
-#: src/Ui/EmailView.php:300
+#: src/Ui/EmailView.php:379
 msgid ""
 "You get a copy that names you as the sender and lists the groups. The others "
 "do not see the groups."
@@ -317,60 +332,60 @@ msgstr ""
 "Du bekommst eine Kopie, die dich als Absender nennt und die Gruppen "
 "auflistet. Die anderen sehen die Gruppen nicht."
 
-#: src/Ui/EmailView.php:310 src/Ui/EmailView.php:404
+#: src/Ui/EmailView.php:389 src/Ui/EmailView.php:483
 msgid "Attachments"
 msgstr "Anhänge"
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:327
+#: src/Ui/EmailView.php:406
 #, php-format
 msgid "Send the email to %d person now?"
 msgid_plural "Send the email to %d people now?"
 msgstr[0] "Die E-Mail jetzt an %d Person senden?"
 msgstr[1] "Die E-Mail jetzt an %d Personen senden?"
 
-#: src/Ui/EmailView.php:335
+#: src/Ui/EmailView.php:414
 msgid "Send"
 msgstr "Senden"
 
-#: src/Ui/EmailView.php:341
+#: src/Ui/EmailView.php:420
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: src/Ui/EmailView.php:352
+#: src/Ui/EmailView.php:431
 msgid "Black"
 msgstr "Schwarz"
 
-#: src/Ui/EmailView.php:353
+#: src/Ui/EmailView.php:432
 msgid "Gray"
 msgstr "Grau"
 
-#: src/Ui/EmailView.php:354
+#: src/Ui/EmailView.php:433
 msgid "Red"
 msgstr "Rot"
 
-#: src/Ui/EmailView.php:355
+#: src/Ui/EmailView.php:434
 msgid "Orange"
 msgstr "Orange"
 
-#: src/Ui/EmailView.php:356
+#: src/Ui/EmailView.php:435
 msgid "Green"
 msgstr "Grün"
 
-#: src/Ui/EmailView.php:357
+#: src/Ui/EmailView.php:436
 msgid "Blue"
 msgstr "Blau"
 
-#: src/Ui/EmailView.php:358
+#: src/Ui/EmailView.php:437
 msgid "Purple"
 msgstr "Lila"
 
-#: src/Ui/EmailView.php:419
+#: src/Ui/EmailView.php:498
 msgid "Add attachments"
 msgstr "Anhänge hinzufügen"
 
 #. translators: 1: maximum number of files, 2: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:422
+#: src/Ui/EmailView.php:501
 #, php-format
 msgid ""
 "Up to %1$d files with %2$s in total, e.g. PDF, images or Office documents."
@@ -379,20 +394,20 @@ msgstr ""
 "Dokumente."
 
 #. translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y
-#: src/Ui/EmailView.php:452
+#: src/Ui/EmailView.php:531
 msgid "F j, Y"
 msgstr "j. F Y"
 
 #. translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i
-#: src/Ui/EmailView.php:454
+#: src/Ui/EmailView.php:533
 msgid "g:i a"
 msgstr "H:i"
 
-#: src/Ui/EmailView.php:499
+#: src/Ui/EmailView.php:578
 msgid "Preview of the email"
 msgstr "Vorschau der E-Mail"
 
-#: src/Ui/EmailView.php:504
+#: src/Ui/EmailView.php:583
 msgid ""
 "This is how the recipients see the email. Your own copy also names you and "
 "the groups."
@@ -400,11 +415,20 @@ msgstr ""
 "So sehen die Empfänger die E-Mail. Deine eigene Kopie nennt zusätzlich dich "
 "und die Gruppen."
 
+#~ msgid "Addresses for my email app"
+#~ msgstr "Adressen für mein E-Mail-Programm"
+
+#~ msgid "Addresses for your own email app"
+#~ msgstr "Adressen für dein eigenes E-Mail-Programm"
+
 #~ msgid ""
 #~ "Every recipient gets their own email; replies go to your email address."
 #~ msgstr ""
 #~ "Alle Empfänger bekommen eine eigene E-Mail; Antworten gehen an deine E-"
 #~ "Mail-Adresse."
+
+#~ msgid "Open in my email app"
+#~ msgstr "In meinem E-Mail-Programm öffnen"
 
 #~ msgid ""
 #~ "Plain text. Every recipient gets their own email; replies go to your "

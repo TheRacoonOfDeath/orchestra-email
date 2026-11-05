@@ -25,6 +25,11 @@ final class EmailView
 {
     public const REVIEW_NONCE = 'orchestra_email_review';
 
+    /** The ways to write to the selected groups, chosen with the buttons below them. */
+    private const MODE_CLIENT = 'client';
+    private const MODE_COPY = 'copy';
+    private const MODE_WRITE = 'write';
+
     /** Recipients listed by name on the review step. */
     private const MAX_LISTED_RECIPIENTS = 200;
 
@@ -77,12 +82,18 @@ final class EmailView
             $errors = [...$errors, ...$this->email->validate($draft, \get_current_user_id())];
         }
 
-        $addresses = '';
-        if ($submitted && $operation === 'addresses') {
+        $mode = match ($submitted ? $operation : '') {
+            self::MODE_CLIENT, self::MODE_COPY, self::MODE_WRITE => $operation,
+            'review', 'edit' => self::MODE_WRITE,
+            // PHP dropped the whole form, which only happens with attachments.
+            default => self::uploadTooLarge() ? self::MODE_WRITE : '',
+        };
+        // Whoever may email the groups may see their addresses.
+        if (\in_array($mode, [self::MODE_CLIENT, self::MODE_COPY], true)) {
             $groupErrors = $this->email->groupErrors($draft->groupIds, \get_current_user_id());
             $errors = [...$errors, ...$groupErrors];
-            if ($groupErrors === []) {
-                $addresses = $this->addresses($draft);
+            if ($groupErrors !== []) {
+                $mode = '';
             }
         }
 
@@ -94,7 +105,7 @@ final class EmailView
             return $html . $this->review($draft, $pageUrl, $logUrl);
         }
 
-        return $html . $addresses . $this->form($draft, $pageUrl);
+        return $html . $this->form($draft, $pageUrl, $mode);
     }
 
     public function log(int $sentMessageId = 0): string
@@ -155,13 +166,20 @@ final class EmailView
         )) . '</p>';
     }
 
-    private function form(EmailDraft $draft, string $pageUrl): string
+    /**
+     * @param string $mode one of the MODE_ constants, or '' before one was chosen
+     */
+    private function form(EmailDraft $draft, string $pageUrl, string $mode): string
     {
         $html = '<form method="post" action="' . \esc_url($pageUrl) . '" enctype="multipart/form-data"'
             . ' class="orchestra-form orchestra-form--wide">'
-            . \wp_nonce_field(self::REVIEW_NONCE, '_wpnonce', false, false)
-            . Form::hidden('op', 'review')
-            . '<fieldset class="orchestra-fieldset"><legend>' . \esc_html__('Recipients', 'orchestra-email')
+            . \wp_nonce_field(self::REVIEW_NONCE, '_wpnonce', false, false);
+        if ($mode === self::MODE_WRITE) {
+            // Enter in a text field submits with the form's first button: it reviews the email.
+            $html .= '<button type="submit" name="op" value="review" tabindex="-1" aria-hidden="true"'
+                . ' style="position:absolute;left:-9999px"></button>';
+        }
+        $html .= '<fieldset class="orchestra-fieldset"><legend>' . \esc_html__('Recipients', 'orchestra-email')
             . '</legend>';
 
         $byCategory = [];
@@ -190,7 +208,45 @@ final class EmailView
         }
         $html .= '</fieldset>';
 
-        $html .= Html::field(
+        $html .= $this->modeButtons($mode);
+
+        return $html . match ($mode) {
+            self::MODE_CLIENT => $this->clientPanel($draft),
+            self::MODE_COPY => $this->copyPanel($draft),
+            self::MODE_WRITE => $this->writeFields($draft),
+            default => '<p class="orchestra-muted">' . \esc_html__(
+                'Select the recipients, then choose how to write to them.',
+                'orchestra-email'
+            ) . '</p>' . self::keptDraft($draft),
+        } . '</form>';
+    }
+
+    /**
+     * The buttons that choose how to write to the selected groups. They need no subject or message,
+     * so they skip the browser's checks.
+     */
+    private function modeButtons(string $mode): string
+    {
+        $buttons = [
+            self::MODE_CLIENT => \__('Write in my email app', 'orchestra-email'),
+            self::MODE_COPY => \__('Copy addresses', 'orchestra-email'),
+            self::MODE_WRITE => \__('Write and send here', 'orchestra-email'),
+        ];
+        $html = '<div class="orchestra-actions" role="group" aria-label="'
+            . \esc_attr__('How do you want to write?', 'orchestra-email') . '">';
+        foreach ($buttons as $value => $label) {
+            $active = $value === $mode;
+            $html .= '<button type="submit" class="orchestra-button' . ($active ? ' orchestra-button--primary' : '')
+                . '" name="op" value="' . $value . '" aria-pressed="' . ($active ? 'true' : 'false')
+                . '" formnovalidate>' . \esc_html($label) . '</button>';
+        }
+
+        return $html . '</div>';
+    }
+
+    private function writeFields(EmailDraft $draft): string
+    {
+        $html = Html::field(
             'orchestra-email-reply-to',
             \__('Replies go to', 'orchestra-email'),
             '<input type="email" id="orchestra-email-reply-to" name="' . EmailDraft::FIELD_REPLY_TO
@@ -212,37 +268,19 @@ final class EmailView
         );
         $html .= $this->attachmentFields($draft);
 
-        // The second button needs no subject or message, so it skips the browser's checks.
-        return $html . '<div class="orchestra-actions">' . Form::submit(\__('Review', 'orchestra-email'), 'primary')
-            . '<button type="submit" class="orchestra-button" name="op" value="addresses" formnovalidate>'
-            . \esc_html__('Addresses for my email app', 'orchestra-email') . '</button>'
-            . '</div></form>';
+        return $html . '<div class="orchestra-actions">'
+            . Form::submit(\__('Review', 'orchestra-email'), 'primary', 'op', 'review') . '</div>';
     }
 
     /**
-     * The addresses of the selected groups, to copy or to open in the user's own email app.
+     * Opens the user's own email app with the recipients in BCC.
      */
-    private function addresses(EmailDraft $draft): string
+    private function clientPanel(EmailDraft $draft): string
     {
         $addresses = $this->email->addresses($draft->groupIds);
-        $count = \count($addresses);
         $link = MailtoLink::bcc($addresses, $draft->subject);
 
-        $html = '<div class="orchestra-card orchestra-stack"><h3 class="orchestra-card__title">'
-            . \esc_html__('Addresses for your own email app', 'orchestra-email') . '</h3>'
-            . '<p>' . \esc_html(\sprintf(
-                /* translators: %d: number of email addresses */
-                \_n(
-                    '%d address. Put it in BCC, so that recipients do not see each other\'s addresses.',
-                    '%d addresses. Put them in BCC, so that recipients do not see each other\'s addresses.',
-                    $count,
-                    'orchestra-email'
-                ),
-                $count
-            )) . '</p>'
-            . '<textarea id="orchestra-email-addresses" readonly rows="4" aria-label="'
-            . \esc_attr__('Email addresses', 'orchestra-email') . '">'
-            . \esc_textarea(\implode(', ', $addresses)) . '</textarea>';
+        $html = '<div class="orchestra-card orchestra-stack">' . self::bccHint(\count($addresses));
         if (!MailtoLink::isSafe($link)) {
             $html .= Notices::html('warning', \sprintf(
                 /* translators: 1: length of the link, 2: length that all email apps accept */
@@ -257,14 +295,55 @@ final class EmailView
             ));
         }
 
-        return $html . '<div class="orchestra-actions">'
+        return $html . '<div class="orchestra-actions"><a class="orchestra-button orchestra-button--primary" href="'
+            . \esc_url($link, ['mailto']) . '">' . \esc_html__('Open my email app', 'orchestra-email') . '</a>'
+            . '</div></div>' . self::keptDraft($draft);
+    }
+
+    /**
+     * The addresses of the recipients, to paste into BCC.
+     */
+    private function copyPanel(EmailDraft $draft): string
+    {
+        $addresses = $this->email->addresses($draft->groupIds);
+
+        return '<div class="orchestra-card orchestra-stack">' . self::bccHint(\count($addresses))
+            . '<textarea id="orchestra-email-addresses" readonly rows="4" aria-label="'
+            . \esc_attr__('Email addresses', 'orchestra-email') . '">'
+            . \esc_textarea(\implode(', ', $addresses)) . '</textarea>'
+            . '<div class="orchestra-actions">'
             . '<button type="button" class="orchestra-button orchestra-button--primary" hidden'
             . ' data-orchestra-copy="orchestra-email-addresses" data-orchestra-copied="'
             . \esc_attr__('Copied', 'orchestra-email') . '">' . \esc_html__('Copy addresses', 'orchestra-email')
-            . '</button>'
-            . '<a class="orchestra-button" href="' . \esc_url($link, ['mailto']) . '">'
-            . \esc_html__('Open in my email app', 'orchestra-email') . '</a>'
-            . '</div></div>';
+            . '</button></div></div>' . self::keptDraft($draft);
+    }
+
+    private static function bccHint(int $count): string
+    {
+        return '<p>' . \esc_html(\sprintf(
+            /* translators: %d: number of email addresses */
+            \_n(
+                '%d address. Put it in BCC, so that recipients do not see each other\'s addresses.',
+                '%d addresses. Put them in BCC, so that recipients do not see each other\'s addresses.',
+                $count,
+                'orchestra-email'
+            ),
+            $count
+        )) . '</p>';
+    }
+
+    /**
+     * What was written so far, kept while another way of writing is shown.
+     */
+    private static function keptDraft(EmailDraft $draft): string
+    {
+        $html = Form::hidden('subject', $draft->subject) . Form::hidden(EmailDraft::FIELD_REPLY_TO, $draft->replyTo)
+            . '<textarea name="body" hidden>' . \esc_textarea($draft->body) . '</textarea>';
+        foreach ($draft->attachmentIds as $id) {
+            $html .= Form::hidden(EmailDraft::FIELD_ATTACHMENT_IDS . '[]', (string) $id);
+        }
+
+        return $html;
     }
 
     private function review(EmailDraft $draft, string $pageUrl, string $logUrl): string

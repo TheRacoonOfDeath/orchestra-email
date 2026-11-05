@@ -35,28 +35,35 @@ The Email page (`[orchestra_email]`) and **Email → Write Email** in wp-admin a
 who may email at least one group.
 
 1. Select one or more groups. Groups are listed by category, e.g. "Orchestra" or a project.
-2. Check the address replies go to (your own by default; any valid address, e.g. a shared
-   mailbox), then enter subject and message. The toolbar formats the selected text: bold, italic, underline, font
-   size, color, bulleted and numbered lists, and removing the formatting.
-3. Optionally choose attachments and click **Review**. Attachments chosen so far stay listed as
+2. Choose how to write to them with one of the three buttons below the groups. Each one reloads the
+   page with the selected groups (so it also works without JavaScript); what was written so far is
+   kept while switching. Nothing is chosen at first, also when a link preselected the groups.
+   - **Write in my email app**: see below.
+   - **Copy addresses**: see below.
+   - **Write and send here**: the platform sends the email. Only this shows the fields for writing.
+3. Check the address replies go to (your own by default; any valid address, e.g. a shared
+   mailbox), then enter subject and message. The toolbar formats the selected text: bold, italic,
+   underline, font size, color, bulleted and numbered lists, and removing the formatting.
+4. Optionally choose attachments and click **Review**. Attachments chosen so far stay listed as
    checkboxes; uncheck one to leave it out.
-4. Check the recipients, the message (shown as the recipients will see it) and the attachments
-   and click **Send**. You always get a
-   copy yourself, even if you are in none of the groups; it is included in the number of
-   recipients.
+5. Check the recipients, the message (shown as the recipients will see it) and the attachments
+   and click **Send**. You always get a copy yourself, even if you are in none of the groups; it
+   is included in the number of recipients.
 
 ### Writing with your own email app
 
-Instead of **Review**, **Addresses for my email app** shows the email addresses of the selected
-groups' recipients (without inactive members, like a sent email; without your own address unless
-you are in a group). Everyone who may email the groups may see their addresses; nothing is logged.
+**Write in my email app** and **Copy addresses** use the email addresses of the selected groups'
+recipients (without inactive members, like a sent email; without your own address unless you are
+in a group). Everyone who may email the groups may see their addresses; nothing is logged.
 
-- **Copy addresses** copies them, separated by commas, to paste into BCC. The button needs
-  JavaScript and orchestra-core 0.16; otherwise the addresses can be selected and copied by hand.
-- **Open in my email app** is a `mailto:` link with the addresses in BCC and the subject, if one
-  was entered. Formatting and attachments are added in the email app. Some email apps (e.g.
-  Outlook on Windows) accept links of only about 2,000 characters and leave out recipients or do
-  not open; above that, a warning recommends copying the addresses (`MailtoLink::SAFE_LENGTH`).
+- **Write in my email app** shows the number of recipients and **Open my email app**, a `mailto:`
+  link with the addresses in BCC (and the subject, if one was entered under "Write and send
+  here"). Formatting and attachments are added in the email app. Some email apps (e.g. Outlook on
+  Windows) accept links of only about 2,000 characters and leave out recipients or do not open;
+  above that, a warning recommends copying the addresses instead (`MailtoLink::SAFE_LENGTH`).
+- **Copy addresses** shows the addresses, separated by commas, and a button that copies them to
+  paste into BCC. The button needs JavaScript and orchestra-core 0.16; otherwise the addresses can
+  be selected and copied by hand.
 
 The platform does not see these emails: they are not in the log, and the addresses stay in the
 email app (sent emails, address suggestions).
