@@ -9,6 +9,7 @@ use Orchestra\Email\Attachment\AttachmentService;
 use Orchestra\Email\EmailDraft;
 use Orchestra\Email\EmailMessage;
 use Orchestra\Email\EmailService;
+use Orchestra\Email\MailtoLink;
 use Orchestra\Email\MessageFormatter;
 use Orchestra\Email\RecipientGroup;
 use Orchestra\Core\Ui\Form;
@@ -76,6 +77,15 @@ final class EmailView
             $errors = [...$errors, ...$this->email->validate($draft, \get_current_user_id())];
         }
 
+        $addresses = '';
+        if ($submitted && $operation === 'addresses') {
+            $groupErrors = $this->email->groupErrors($draft->groupIds, \get_current_user_id());
+            $errors = [...$errors, ...$groupErrors];
+            if ($groupErrors === []) {
+                $addresses = $this->addresses($draft);
+            }
+        }
+
         $html = '';
         foreach ($errors as $error) {
             $html .= Notices::html('error', $error);
@@ -84,7 +94,7 @@ final class EmailView
             return $html . $this->review($draft, $pageUrl, $logUrl);
         }
 
-        return $html . $this->form($draft, $pageUrl);
+        return $html . $addresses . $this->form($draft, $pageUrl);
     }
 
     public function log(int $sentMessageId = 0): string
@@ -202,8 +212,59 @@ final class EmailView
         );
         $html .= $this->attachmentFields($draft);
 
+        // The second button needs no subject or message, so it skips the browser's checks.
         return $html . '<div class="orchestra-actions">' . Form::submit(\__('Review', 'orchestra-email'), 'primary')
+            . '<button type="submit" class="orchestra-button" name="op" value="addresses" formnovalidate>'
+            . \esc_html__('Addresses for my email app', 'orchestra-email') . '</button>'
             . '</div></form>';
+    }
+
+    /**
+     * The addresses of the selected groups, to copy or to open in the user's own email app.
+     */
+    private function addresses(EmailDraft $draft): string
+    {
+        $addresses = $this->email->addresses($draft->groupIds);
+        $count = \count($addresses);
+        $link = MailtoLink::bcc($addresses, $draft->subject);
+
+        $html = '<div class="orchestra-card orchestra-stack"><h3 class="orchestra-card__title">'
+            . \esc_html__('Addresses for your own email app', 'orchestra-email') . '</h3>'
+            . '<p>' . \esc_html(\sprintf(
+                /* translators: %d: number of email addresses */
+                \_n(
+                    '%d address. Put it in BCC, so that recipients do not see each other\'s addresses.',
+                    '%d addresses. Put them in BCC, so that recipients do not see each other\'s addresses.',
+                    $count,
+                    'orchestra-email'
+                ),
+                $count
+            )) . '</p>'
+            . '<textarea id="orchestra-email-addresses" readonly rows="4" aria-label="'
+            . \esc_attr__('Email addresses', 'orchestra-email') . '">'
+            . \esc_textarea(\implode(', ', $addresses)) . '</textarea>';
+        if (!MailtoLink::isSafe($link)) {
+            $html .= Notices::html('warning', \sprintf(
+                /* translators: 1: length of the link, 2: length that all email apps accept */
+                \__(
+                    'With %1$d characters, the link is longer than some email apps accept (about %2$d, e.g. Outlook'
+                        . ' on Windows). They may leave out recipients or not open at all. Copying the addresses is'
+                        . ' the safer option.',
+                    'orchestra-email'
+                ),
+                \strlen($link),
+                MailtoLink::SAFE_LENGTH
+            ));
+        }
+
+        return $html . '<div class="orchestra-actions">'
+            . '<button type="button" class="orchestra-button orchestra-button--primary" hidden'
+            . ' data-orchestra-copy="orchestra-email-addresses" data-orchestra-copied="'
+            . \esc_attr__('Copied', 'orchestra-email') . '">' . \esc_html__('Copy addresses', 'orchestra-email')
+            . '</button>'
+            . '<a class="orchestra-button" href="' . \esc_url($link, ['mailto']) . '">'
+            . \esc_html__('Open in my email app', 'orchestra-email') . '</a>'
+            . '</div></div>';
     }
 
     private function review(EmailDraft $draft, string $pageUrl, string $logUrl): string

@@ -45,6 +45,22 @@ who may email at least one group.
    copy yourself, even if you are in none of the groups; it is included in the number of
    recipients.
 
+### Writing with your own email app
+
+Instead of **Review**, **Addresses for my email app** shows the email addresses of the selected
+groups' recipients (without inactive members, like a sent email; without your own address unless
+you are in a group). Everyone who may email the groups may see their addresses; nothing is logged.
+
+- **Copy addresses** copies them, separated by commas, to paste into BCC. The button needs
+  JavaScript and orchestra-core 0.16; otherwise the addresses can be selected and copied by hand.
+- **Open in my email app** is a `mailto:` link with the addresses in BCC and the subject, if one
+  was entered. Formatting and attachments are added in the email app. Some email apps (e.g.
+  Outlook on Windows) accept links of only about 2,000 characters and leave out recipients or do
+  not open; above that, a warning recommends copying the addresses (`MailtoLink::SAFE_LENGTH`).
+
+The platform does not see these emails: they are not in the log, and the addresses stay in the
+email app (sent emails, address suggestions).
+
 **Email → Sent Emails** shows the log: date, sender, subject, groups, number of recipients and
 whether all emails were sent.
 

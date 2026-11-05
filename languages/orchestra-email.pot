@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-03 18:15+0100\n"
+"POT-Creation-Date: 2026-11-05 16:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: src/Admin/ComposePage.php:54 src/Admin/ComposePage.php:55 src/Plugin.php:113
+#: src/Admin/ComposePage.php:54 src/Admin/ComposePage.php:55 src/Plugin.php:114
 msgid "Email"
 msgstr ""
 
@@ -98,23 +98,23 @@ msgstr ""
 msgid "Please enter a valid email address for replies."
 msgstr ""
 
-#: src/EmailSender.php:107 src/Ui/EmailView.php:122
+#: src/EmailSender.php:117 src/Ui/EmailView.php:132
 msgid "Former member"
 msgstr ""
 
-#: src/EmailService.php:108
+#: src/EmailService.php:109
 msgid "An attachment is no longer available. Please add it again."
 msgstr ""
 
-#: src/EmailService.php:112
+#: src/EmailService.php:124
 msgid "Please select at least one group."
 msgstr ""
 
-#: src/EmailService.php:119
+#: src/EmailService.php:129
 msgid "You are not allowed to email one of the selected groups."
 msgstr ""
 
-#: src/EmailService.php:124
+#: src/EmailService.php:133
 msgid "The selected groups have no recipients."
 msgstr ""
 
@@ -124,21 +124,21 @@ msgstr ""
 msgid "Sent by %1$s via %2$s to: %3$s"
 msgstr ""
 
-#: src/Plugin.php:114
+#: src/Plugin.php:115
 msgid "Write to members and project participants."
 msgstr ""
 
-#: src/Plugin.php:124
+#: src/Plugin.php:125
 msgid "Email attachments"
 msgstr ""
 
-#: src/Plugin.php:173
+#: src/Plugin.php:174
 msgid ""
 "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
 "Core; until then, Orchestra Core sends the emails itself."
 msgstr ""
 
-#: src/Plugin.php:177
+#: src/Plugin.php:178
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
 msgstr ""
 
@@ -159,185 +159,228 @@ msgid "Write email"
 msgstr ""
 
 #. translators: %s: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:65
+#: src/Ui/EmailView.php:66
 #, php-format
 msgid "The attachments are too large. At most %s can be uploaded at once."
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:97
+#: src/Ui/EmailView.php:107
 #, php-format
 msgid "Your email has been sent to %d recipients."
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:99
+#: src/Ui/EmailView.php:109
 #, php-format
 msgid ""
 "Your email is being sent to %d recipients. Large groups take a few minutes."
 msgstr ""
 
-#: src/Ui/EmailView.php:109
+#: src/Ui/EmailView.php:119
 msgid "Sent"
 msgstr ""
 
 #. translators: 1: number of sent emails, 2: number of recipients
-#: src/Ui/EmailView.php:112
+#: src/Ui/EmailView.php:122
 #, php-format
 msgid "Sending (%1$d of %2$d)"
 msgstr ""
 
 #. translators: %d: number of emails that could not be sent
-#: src/Ui/EmailView.php:118
+#: src/Ui/EmailView.php:128
 #, php-format
 msgid "%d failed"
 msgstr ""
 
-#: src/Ui/EmailView.php:132
+#: src/Ui/EmailView.php:142
 msgid "Date"
 msgstr ""
 
-#: src/Ui/EmailView.php:133
+#: src/Ui/EmailView.php:143
 msgid "Sender"
 msgstr ""
 
-#: src/Ui/EmailView.php:134 src/Ui/EmailView.php:193 src/Ui/EmailView.php:245
+#: src/Ui/EmailView.php:144 src/Ui/EmailView.php:203 src/Ui/EmailView.php:306
 msgid "Subject"
 msgstr ""
 
-#: src/Ui/EmailView.php:135 src/Ui/EmailView.php:231
+#: src/Ui/EmailView.php:145 src/Ui/EmailView.php:292
 msgid "Groups"
 msgstr ""
 
-#: src/Ui/EmailView.php:136 src/Ui/EmailView.php:154 src/Ui/EmailView.php:233
+#: src/Ui/EmailView.php:146 src/Ui/EmailView.php:164 src/Ui/EmailView.php:294
 msgid "Recipients"
 msgstr ""
 
-#: src/Ui/EmailView.php:137
+#: src/Ui/EmailView.php:147
 msgid "Status"
 msgstr ""
 
-#: src/Ui/EmailView.php:140
+#: src/Ui/EmailView.php:150
 msgid "No emails have been sent yet."
 msgstr ""
 
 #. translators: %d: number of days
-#: src/Ui/EmailView.php:143
+#: src/Ui/EmailView.php:153
 #, php-format
 msgid ""
 "Texts are deleted once sent. The log shows who emailed which groups for %d "
 "days."
 msgstr ""
 
-#: src/Ui/EmailView.php:185 src/Ui/EmailView.php:244
+#: src/Ui/EmailView.php:195 src/Ui/EmailView.php:305
 msgid "Replies go to"
 msgstr ""
 
-#: src/Ui/EmailView.php:189
+#: src/Ui/EmailView.php:199
 msgid ""
 "Prefilled with your email address. Recipients' replies go to this address."
 msgstr ""
 
-#: src/Ui/EmailView.php:199 src/Ui/EmailView.php:247
+#: src/Ui/EmailView.php:209 src/Ui/EmailView.php:308
 msgid "Message"
 msgstr ""
 
-#: src/Ui/EmailView.php:201
+#: src/Ui/EmailView.php:211
 msgid "Every recipient gets their own email."
 msgstr ""
 
-#: src/Ui/EmailView.php:205
+#: src/Ui/EmailView.php:216
 msgid "Review"
 msgstr ""
 
+#: src/Ui/EmailView.php:218
+msgid "Addresses for my email app"
+msgstr ""
+
+#: src/Ui/EmailView.php:232
+msgid "Addresses for your own email app"
+msgstr ""
+
+#: src/Ui/EmailView.php:236
+#, php-format
+msgid ""
+"%d address. Put it in BCC, so that recipients do not see each other's "
+"addresses."
+msgid_plural ""
+"%d addresses. Put them in BCC, so that recipients do not see each other's "
+"addresses."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Ui/EmailView.php:244
+msgid "Email addresses"
+msgstr ""
+
+#: src/Ui/EmailView.php:250
+#, php-format
+msgid ""
+"With %1$d characters, the link is longer than some email apps accept (about "
+"%2$d, e.g. Outlook on Windows). They may leave out recipients or not open at "
+"all. Copying the addresses is the safer option."
+msgstr ""
+
+#: src/Ui/EmailView.php:263
+msgid "Copied"
+msgstr ""
+
+#: src/Ui/EmailView.php:263
+msgid "Copy addresses"
+msgstr ""
+
+#: src/Ui/EmailView.php:266
+msgid "Open in my email app"
+msgstr ""
+
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:235
+#: src/Ui/EmailView.php:296
 #, php-format
 msgid "%d person"
 msgid_plural "%d people"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Ui/EmailView.php:239
+#: src/Ui/EmailView.php:300
 msgid ""
 "You get a copy that names you as the sender and lists the groups. The others "
 "do not see the groups."
 msgstr ""
 
-#: src/Ui/EmailView.php:249 src/Ui/EmailView.php:343
+#: src/Ui/EmailView.php:310 src/Ui/EmailView.php:404
 msgid "Attachments"
 msgstr ""
 
 #. translators: %d: number of recipients
-#: src/Ui/EmailView.php:266
+#: src/Ui/EmailView.php:327
 #, php-format
 msgid "Send the email to %d person now?"
 msgid_plural "Send the email to %d people now?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Ui/EmailView.php:274
+#: src/Ui/EmailView.php:335
 msgid "Send"
 msgstr ""
 
-#: src/Ui/EmailView.php:280
+#: src/Ui/EmailView.php:341
 msgid "Edit"
 msgstr ""
 
-#: src/Ui/EmailView.php:291
+#: src/Ui/EmailView.php:352
 msgid "Black"
 msgstr ""
 
-#: src/Ui/EmailView.php:292
+#: src/Ui/EmailView.php:353
 msgid "Gray"
 msgstr ""
 
-#: src/Ui/EmailView.php:293
+#: src/Ui/EmailView.php:354
 msgid "Red"
 msgstr ""
 
-#: src/Ui/EmailView.php:294
+#: src/Ui/EmailView.php:355
 msgid "Orange"
 msgstr ""
 
-#: src/Ui/EmailView.php:295
+#: src/Ui/EmailView.php:356
 msgid "Green"
 msgstr ""
 
-#: src/Ui/EmailView.php:296
+#: src/Ui/EmailView.php:357
 msgid "Blue"
 msgstr ""
 
-#: src/Ui/EmailView.php:297
+#: src/Ui/EmailView.php:358
 msgid "Purple"
 msgstr ""
 
-#: src/Ui/EmailView.php:358
+#: src/Ui/EmailView.php:419
 msgid "Add attachments"
 msgstr ""
 
 #. translators: 1: maximum number of files, 2: maximum size, e.g. "10 MB"
-#: src/Ui/EmailView.php:361
+#: src/Ui/EmailView.php:422
 #, php-format
 msgid ""
 "Up to %1$d files with %2$s in total, e.g. PDF, images or Office documents."
 msgstr ""
 
 #. translators: date format, see https://www.php.net/manual/datetime.format.php; German: j. F Y
-#: src/Ui/EmailView.php:391
+#: src/Ui/EmailView.php:452
 msgid "F j, Y"
 msgstr ""
 
 #. translators: time format, see https://www.php.net/manual/datetime.format.php; German: H:i
-#: src/Ui/EmailView.php:393
+#: src/Ui/EmailView.php:454
 msgid "g:i a"
 msgstr ""
 
-#: src/Ui/EmailView.php:438
+#: src/Ui/EmailView.php:499
 msgid "Preview of the email"
 msgstr ""
 
-#: src/Ui/EmailView.php:443
+#: src/Ui/EmailView.php:504
 msgid ""
 "This is how the recipients see the email. Your own copy also names you and "
 "the groups."

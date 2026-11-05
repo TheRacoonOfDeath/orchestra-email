@@ -109,23 +109,52 @@ final class EmailService
             $errors[] = \__('An attachment is no longer available. Please add it again.', 'orchestra-email');
         }
         $errors = [...$errors, ...$this->attachments->errors($attachments)];
-        if ($draft->groupIds === []) {
-            $errors[] = \__('Please select at least one group.', 'orchestra-email');
-            return $errors;
-        }
 
-        foreach ($draft->groupIds as $id) {
+        return [...$errors, ...$this->groupErrors($draft->groupIds, $senderId)];
+    }
+
+    /**
+     * @param list<string> $groupIds
+     * @return list<string> error messages; empty if the user may email the groups and they have
+     *     recipients
+     */
+    public function groupErrors(array $groupIds, int $userId): array
+    {
+        if ($groupIds === []) {
+            return [\__('Please select at least one group.', 'orchestra-email')];
+        }
+        foreach ($groupIds as $id) {
             $group = $this->groups()->find($id);
-            if ($group === null || !$group->canBeEmailedBy($senderId)) {
-                $errors[] = \__('You are not allowed to email one of the selected groups.', 'orchestra-email');
-                return $errors;
+            if ($group === null || !$group->canBeEmailedBy($userId)) {
+                return [\__('You are not allowed to email one of the selected groups.', 'orchestra-email')];
             }
         }
-        if ($this->recipients($draft->groupIds) === []) {
-            $errors[] = \__('The selected groups have no recipients.', 'orchestra-email');
+        if ($this->recipients($groupIds) === []) {
+            return [\__('The selected groups have no recipients.', 'orchestra-email')];
         }
 
-        return $errors;
+        return [];
+    }
+
+    /**
+     * The email addresses of the groups' recipients, for writing to them with one's own email app.
+     * Check {@see groupErrors()} first: whoever may email the groups may see their addresses.
+     *
+     * @param list<string> $groupIds
+     * @return list<string> sorted
+     */
+    public function addresses(array $groupIds): array
+    {
+        $addresses = [];
+        foreach ($this->recipients($groupIds) as $userId) {
+            $user = \get_userdata($userId);
+            if ($user !== false) {
+                $addresses[] = $user->user_email;
+            }
+        }
+        \natcasesort($addresses);
+
+        return \array_values(\array_unique($addresses));
     }
 
     /**
