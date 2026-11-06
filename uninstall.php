@@ -15,6 +15,7 @@ if (! defined('WP_UNINSTALL_PLUGIN')) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Orchestra\Email\Attachment\AttachmentStorage;
+use Orchestra\Email\Automatic\TemplateStore;
 use Orchestra\Email\EmailSchema;
 use Orchestra\Email\EmailSender;
 use Orchestra\Email\EmailService;
@@ -30,3 +31,4 @@ delete_option('orchestra_core_email_lock');
 AttachmentStorage::fromWordPress()->removeDirectory();
 delete_option(AttachmentStorage::OPTION_DIRECTORY_SUFFIX);
 delete_option(SenderName::OPTION);
+delete_option(TemplateStore::OPTION);
