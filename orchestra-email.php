@@ -4,7 +4,7 @@
  * Plugin Name:      Orchestra Email
  * Plugin URI:       https://github.com/TheRacoonOfDeath/orchestra-email
  * Description:      Emails to members, sections and project participants for the Orchestra plugin suite.
- * Version:          0.10.0
+ * Version:          0.11.0
  * Author:           Julian Nickerl (contact@julian-nickerl.de)
  * Author URI:       mailto:contact@julian-nickerl.de
  * License:          MIT

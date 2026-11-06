@@ -13,6 +13,7 @@ use Orchestra\Email\Attachment\AttachmentRepository;
 use Orchestra\Email\Attachment\AttachmentService;
 use Orchestra\Email\Attachment\AttachmentStorage;
 use Orchestra\Email\Ui\AutomaticEmailsController;
+use Orchestra\Email\Ui\SenderNameController;
 use Orchestra\Email\Ui\AutomaticEmailsView;
 use Orchestra\Email\Ui\EmailController;
 use Orchestra\Email\Ui\EmailShortcode;
@@ -111,6 +112,7 @@ final class Plugin
         $automatic = new AutomaticEmailsView($this->email);
         (new EmailController($this->email))->register();
         (new AutomaticEmailsController($this->email))->register();
+        (new SenderNameController())->register();
         (new EmailShortcode($view, $automatic))->register();
         \add_action(Menu::REGISTER_ACTION, function (Menu $menu): void {
             $menu->add(new MenuItem(

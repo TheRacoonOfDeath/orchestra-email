@@ -147,6 +147,14 @@ function wp_validate_redirect(string $location, string $fallback = ''): string
     return $host === null || $host === 'orchestra.example' ? $location : $fallback;
 }
 
+/**
+ * Simplified: removes tags and line breaks and trims, like WordPress.
+ */
+function sanitize_text_field(string $text): string
+{
+    return \trim((string) \preg_replace('/[\r\n\t ]+/', ' ', \strip_tags($text)));
+}
+
 function esc_html(string $text): string
 {
     return \htmlspecialchars($text, ENT_QUOTES);

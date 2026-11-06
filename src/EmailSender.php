@@ -150,7 +150,11 @@ final class EmailSender
             }
         };
 
+        // Only the emails of orchestra-email get the sender name; other emails of the site keep theirs.
+        $fromName = static fn (): string => SenderName::current();
+
         \add_action('phpmailer_init', $addText);
+        \add_filter('wp_mail_from_name', $fromName);
         try {
             return \wp_mail(
                 $recipient->user_email,
@@ -161,6 +165,7 @@ final class EmailSender
             );
         } finally {
             \remove_action('phpmailer_init', $addText);
+            \remove_filter('wp_mail_from_name', $fromName);
         }
     }
 

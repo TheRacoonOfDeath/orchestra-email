@@ -50,7 +50,7 @@ final class ComposePage
     public function addMenu(): void
     {
         $groups = $this->view->allowedGroups() !== [];
-        $automatic = $this->automatic->editable() !== [];
+        $automatic = $this->automatic->visible();
         if (!$groups && !$automatic) {
             return;
         }

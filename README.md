@@ -12,6 +12,7 @@ Part of the Orchestra plugin suite. Requires the [orchestra-core](https://github
   (orchestra-members), accepted and pending participants of a project (orchestra-projects)
 - Instead of sending through the platform, write with your own email app: open it with the selected groups in BCC, or copy their addresses
 - Automatic emails registered by the other plugins, e.g. about changed parts, with texts the organizers change on the Email page
+- A sender name for all emails instead of "WordPress" (default "Orchestra"), changed by administrators on the Email page
 - One email per recipient, sent in the background in batches; replies go to the sender or an address they choose
 - A log of the sent emails with metadata only, deleted after 12 months
 

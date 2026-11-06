@@ -18,6 +18,7 @@ use Orchestra\Email\Attachment\AttachmentStorage;
 use Orchestra\Email\EmailSchema;
 use Orchestra\Email\EmailSender;
 use Orchestra\Email\EmailService;
+use Orchestra\Email\SenderName;
 
 $orchestraEmailDatabase = $GLOBALS['wpdb'];
 if ($orchestraEmailDatabase instanceof wpdb) {
@@ -28,3 +29,4 @@ wp_clear_scheduled_hook(EmailService::PURGE_CRON_HOOK);
 delete_option('orchestra_core_email_lock');
 AttachmentStorage::fromWordPress()->removeDirectory();
 delete_option(AttachmentStorage::OPTION_DIRECTORY_SUFFIX);
+delete_option(SenderName::OPTION);

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 19:15+0100\n"
+"POT-Creation-Date: 2026-11-06 12:48+0100\n"
 "PO-Revision-Date: 2026-10-16 00:00+0000\n"
 "Last-Translator: Julian Nickerl\n"
 "Language-Team: German\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/Admin/ComposePage.php:61 src/Admin/ComposePage.php:62 src/Plugin.php:118
+#: src/Admin/ComposePage.php:61 src/Admin/ComposePage.php:62 src/Plugin.php:120
 msgid "Email"
 msgstr "E-Mail"
 
@@ -126,15 +126,15 @@ msgstr "Die ausgewählten Gruppen haben keine Empfänger."
 msgid "Sent by %1$s via %2$s to: %3$s"
 msgstr "Gesendet von %1$s über %2$s an: %3$s"
 
-#: src/Plugin.php:119
+#: src/Plugin.php:121
 msgid "Write to members and project participants."
 msgstr "Schreibe an Mitglieder und Projektteilnehmer."
 
-#: src/Plugin.php:130
+#: src/Plugin.php:132
 msgid "Email attachments"
 msgstr "E-Mail-Anhänge"
 
-#: src/Plugin.php:179
+#: src/Plugin.php:181
 msgid ""
 "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
 "Core; until then, Orchestra Core sends the emails itself."
@@ -142,10 +142,14 @@ msgstr ""
 "Orchestra Email braucht Orchestra Core 0.7 oder neuer. Bitte aktualisiere "
 "Orchestra Core; bis dahin verschickt Orchestra Core die E-Mails selbst."
 
-#: src/Plugin.php:183
+#: src/Plugin.php:185
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
 msgstr ""
 "Orchestra Email braucht Orchestra Core. Bitte installiere und aktiviere es."
+
+#: src/SenderName.php:38
+msgid "Orchestra"
+msgstr "Orchester"
 
 #: src/Ui/AutomaticEmailsController.php:45
 msgid "You are not allowed to change this email."
@@ -159,47 +163,68 @@ msgstr "Es wird wieder der Standardtext verwendet."
 msgid "The text has been saved."
 msgstr "Der Text wurde gespeichert."
 
-#: src/Ui/AutomaticEmailsView.php:35
+#: src/Ui/AutomaticEmailsView.php:46
 msgid "There are no automatic emails you may change."
 msgstr "Es gibt keine automatischen E-Mails, die du ändern darfst."
 
-#: src/Ui/AutomaticEmailsView.php:39
+#: src/Ui/AutomaticEmailsView.php:50
 msgid ""
 "The system sends these emails by itself. Members can turn them off in their "
 "profile."
-msgstr "Diese E-Mails verschickt das System von selbst. Mitglieder können sie in ihrem Profil abschalten."
+msgstr ""
+"Diese E-Mails verschickt das System von selbst. Mitglieder können sie in "
+"ihrem Profil abschalten."
 
-#: src/Ui/AutomaticEmailsView.php:62
+#: src/Ui/AutomaticEmailsView.php:67 src/Ui/AutomaticEmailsView.php:81
+msgid "Sender name"
+msgstr "Absendername"
+
+#: src/Ui/AutomaticEmailsView.php:69 src/Ui/AutomaticEmailsView.php:112
 msgid "Changed"
 msgstr "Geändert"
 
-#: src/Ui/AutomaticEmailsView.php:63
+#: src/Ui/AutomaticEmailsView.php:70 src/Ui/AutomaticEmailsView.php:113
 msgid "Default"
 msgstr "Standard"
 
-#: src/Ui/AutomaticEmailsView.php:73 src/Ui/EmailView.php:152
+#: src/Ui/AutomaticEmailsView.php:72
+msgid ""
+"Recipients see this name as the sender of all emails sent from here, written "
+"or automatic. Replies still go to the reply address."
+msgstr ""
+"Empfänger sehen diesen Namen als Absender aller E-Mails, die von hier "
+"verschickt werden, geschrieben oder automatisch. Antworten gehen weiterhin "
+"an die Antwortadresse."
+
+#: src/Ui/AutomaticEmailsView.php:86 src/Ui/AutomaticEmailsView.php:141
+msgid "Save"
+msgstr "Speichern"
+
+#. translators: %s: default sender name, e.g. "Orchestra"
+#: src/Ui/AutomaticEmailsView.php:91
+#, php-format
+msgid "Reset to \"%s\""
+msgstr "Auf „%s“ zurücksetzen"
+
+#: src/Ui/AutomaticEmailsView.php:123 src/Ui/EmailView.php:152
 #: src/Ui/EmailView.php:256 src/Ui/EmailView.php:382
 msgid "Subject"
 msgstr "Betreff"
 
-#: src/Ui/AutomaticEmailsView.php:80 src/Ui/EmailView.php:262
+#: src/Ui/AutomaticEmailsView.php:130 src/Ui/EmailView.php:262
 #: src/Ui/EmailView.php:384
 msgid "Message"
 msgstr "Nachricht"
 
-#: src/Ui/AutomaticEmailsView.php:85
+#: src/Ui/AutomaticEmailsView.php:135
 msgid "These placeholders are replaced for every recipient:"
 msgstr "Diese Platzhalter werden für jeden Empfänger ersetzt:"
 
-#: src/Ui/AutomaticEmailsView.php:91
-msgid "Save"
-msgstr "Speichern"
-
-#: src/Ui/AutomaticEmailsView.php:95
+#: src/Ui/AutomaticEmailsView.php:145
 msgid "Replace your text with the default text?"
 msgstr "Deinen Text durch den Standardtext ersetzen?"
 
-#: src/Ui/AutomaticEmailsView.php:97
+#: src/Ui/AutomaticEmailsView.php:147
 msgid "Reset to default"
 msgstr "Auf Standard zurücksetzen"
 
@@ -471,6 +496,16 @@ msgid ""
 msgstr ""
 "So sehen die Empfänger die E-Mail. Deine eigene Kopie nennt zusätzlich dich "
 "und die Gruppen."
+
+#: src/Ui/SenderNameController.php:31
+msgid "You are not allowed to change the sender name."
+msgstr "Du darfst den Absendernamen nicht ändern."
+
+#. translators: %s: sender name
+#: src/Ui/SenderNameController.php:41
+#, php-format
+msgid "Emails are now sent as \"%s\"."
+msgstr "E-Mails werden jetzt als „%s“ verschickt."
 
 #~ msgid "Addresses for my email app"
 #~ msgstr "Adressen für mein E-Mail-Programm"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: orchestra-email\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 19:15+0100\n"
+"POT-Creation-Date: 2026-11-06 12:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: src/Admin/ComposePage.php:61 src/Admin/ComposePage.php:62 src/Plugin.php:118
+#: src/Admin/ComposePage.php:61 src/Admin/ComposePage.php:62 src/Plugin.php:120
 msgid "Email"
 msgstr ""
 
@@ -129,22 +129,26 @@ msgstr ""
 msgid "Sent by %1$s via %2$s to: %3$s"
 msgstr ""
 
-#: src/Plugin.php:119
+#: src/Plugin.php:121
 msgid "Write to members and project participants."
 msgstr ""
 
-#: src/Plugin.php:130
+#: src/Plugin.php:132
 msgid "Email attachments"
 msgstr ""
 
-#: src/Plugin.php:179
+#: src/Plugin.php:181
 msgid ""
 "Orchestra Email needs Orchestra Core 0.7 or later. Please update Orchestra "
 "Core; until then, Orchestra Core sends the emails itself."
 msgstr ""
 
-#: src/Plugin.php:183
+#: src/Plugin.php:185
 msgid "Orchestra Email needs Orchestra Core. Please install and activate it."
+msgstr ""
+
+#: src/SenderName.php:38
+msgid "Orchestra"
 msgstr ""
 
 #: src/Ui/AutomaticEmailsController.php:45
@@ -159,47 +163,63 @@ msgstr ""
 msgid "The text has been saved."
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:35
+#: src/Ui/AutomaticEmailsView.php:46
 msgid "There are no automatic emails you may change."
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:39
+#: src/Ui/AutomaticEmailsView.php:50
 msgid ""
 "The system sends these emails by itself. Members can turn them off in their "
 "profile."
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:62
+#: src/Ui/AutomaticEmailsView.php:67 src/Ui/AutomaticEmailsView.php:81
+msgid "Sender name"
+msgstr ""
+
+#: src/Ui/AutomaticEmailsView.php:69 src/Ui/AutomaticEmailsView.php:112
 msgid "Changed"
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:63
+#: src/Ui/AutomaticEmailsView.php:70 src/Ui/AutomaticEmailsView.php:113
 msgid "Default"
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:73 src/Ui/EmailView.php:152
+#: src/Ui/AutomaticEmailsView.php:72
+msgid ""
+"Recipients see this name as the sender of all emails sent from here, written "
+"or automatic. Replies still go to the reply address."
+msgstr ""
+
+#: src/Ui/AutomaticEmailsView.php:86 src/Ui/AutomaticEmailsView.php:141
+msgid "Save"
+msgstr ""
+
+#. translators: %s: default sender name, e.g. "Orchestra"
+#: src/Ui/AutomaticEmailsView.php:91
+#, php-format
+msgid "Reset to \"%s\""
+msgstr ""
+
+#: src/Ui/AutomaticEmailsView.php:123 src/Ui/EmailView.php:152
 #: src/Ui/EmailView.php:256 src/Ui/EmailView.php:382
 msgid "Subject"
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:80 src/Ui/EmailView.php:262
+#: src/Ui/AutomaticEmailsView.php:130 src/Ui/EmailView.php:262
 #: src/Ui/EmailView.php:384
 msgid "Message"
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:85
+#: src/Ui/AutomaticEmailsView.php:135
 msgid "These placeholders are replaced for every recipient:"
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:91
-msgid "Save"
-msgstr ""
-
-#: src/Ui/AutomaticEmailsView.php:95
+#: src/Ui/AutomaticEmailsView.php:145
 msgid "Replace your text with the default text?"
 msgstr ""
 
-#: src/Ui/AutomaticEmailsView.php:97
+#: src/Ui/AutomaticEmailsView.php:147
 msgid "Reset to default"
 msgstr ""
 
@@ -449,4 +469,14 @@ msgstr ""
 msgid ""
 "This is how the recipients see the email. Your own copy also names you and "
 "the groups."
+msgstr ""
+
+#: src/Ui/SenderNameController.php:31
+msgid "You are not allowed to change the sender name."
+msgstr ""
+
+#. translators: %s: sender name
+#: src/Ui/SenderNameController.php:41
+#, php-format
+msgid "Emails are now sent as \"%s\"."
 msgstr ""

@@ -211,7 +211,15 @@ programs that do not show HTML.
   chosen when writing (by default the sender's; emails queued before 0.3 use the sender's) and the
   attachments. Only the sender's copy has a footer naming sender and groups; the other recipients
   do not learn which groups were emailed. The **From** address is left to WordPress
-  (`wordpress@your-domain`) or an SMTP plugin.
+  (`wordpress@your-domain`) or an SMTP plugin; the From **name** is the sender name (see below).
+- **Sender name** (since 0.11): every email of orchestra-email, written or automatic, shows the
+  sender name instead of WordPress's "WordPress", by default "Orchestra" in the Orchestra language
+  ("Orchester" in German). Administrators (`manage_options`, a site-wide setting) change it at the
+  top of the tab **Automatic emails**, which they therefore always see, and reset it to the
+  default; it is stored in the option `orchestra_email_sender_name` (plain text, one line, without
+  quotes or angle brackets, at most 100 characters). It is set with the filter `wp_mail_from_name`
+  only while orchestra-email sends, so the other emails of the site (e.g. password resets) keep
+  their sender. An SMTP plugin that forces its own From name overrides it.
 - A failed delivery is retried twice in the next batches, then counted as failed in the log.
 - When all emails of a message are sent, its text and reply address are deleted. The log entry is deleted after
   12 months (filter `orchestra_email_log_retention_days`) by the daily event

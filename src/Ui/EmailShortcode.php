@@ -40,7 +40,7 @@ final class EmailShortcode
             $tabs['compose'] = \__('Write email', 'orchestra-email');
             $tabs['log'] = \__('Sent emails', 'orchestra-email');
         }
-        if ($this->automatic->editable() !== []) {
+        if ($this->automatic->visible()) {
             $tabs['automatic'] = \__('Automatic emails', 'orchestra-email');
         }
         if ($tabs === []) {
