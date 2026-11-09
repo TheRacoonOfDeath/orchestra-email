@@ -126,6 +126,8 @@ final class ComposePage
     public function renderLog(): void
     {
         $sent = \absint(\is_string($_GET['sent'] ?? null) ? $_GET['sent'] : 0);
+        // $sent is an integer (absint), which Semgrep cannot see.
+        // nosemgrep: php.lang.security.injection.echoed-request.echoed-request
         echo Html::adminPage(
             \__('Sent Emails', 'orchestra-email'),
             $this->view->log($sent),
