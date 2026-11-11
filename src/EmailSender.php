@@ -140,7 +140,11 @@ final class EmailSender
 
         // Automatic emails have no copy for the sender, so no footer either.
         $footer = $message->automatic === null && $message->senderId !== null && $recipient->ID === $message->senderId
-            ? MessageFormatter::footer($senderName, $message->groupLabels, $siteName)
+            ? MessageFormatter::footer(
+                $senderName,
+                \array_map(EmailService::displayLabel(...), $message->groupLabels),
+                $siteName
+            )
             : null;
         $text = MessageFormatter::text($body, $footer);
         // wp_mail() has no parameter for the plain-text version.

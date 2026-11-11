@@ -57,14 +57,14 @@ final class EmailLog
     public function createAutomatic(
         string $automaticId,
         int $senderId,
+        string $logSubject,
         string $logLabel,
         string $replyTo,
         array $emails,
     ): int {
-        $first = \reset($emails);
         $inserted = $this->wpdb->insert($this->schema->messagesTable(), [
             'sender_id' => $senderId,
-            'subject' => \mb_substr($first === false ? $logLabel : $first['subject'], 0, 255),
+            'subject' => \mb_substr($logSubject, 0, 255),
             'reply_to' => $replyTo,
             'group_labels' => (string) \wp_json_encode([$logLabel]),
             'recipients' => \count($emails),
@@ -104,16 +104,46 @@ final class EmailLog
     }
 
     /**
+     * @param int|null $senderId only the emails of this sender; null for all
      * @return list<EmailMessage> newest first
      */
-    public function latest(int $limit): array
+    public function latest(int $limit, ?int $senderId = null): array
     {
-        $rows = Row::all($this->wpdb->get_results(
-            $this->wpdb->prepare('SELECT * FROM %i ORDER BY id DESC LIMIT %d', $this->schema->messagesTable(), $limit),
-            ARRAY_A
-        ));
+        $query = $senderId === null
+            ? $this->wpdb->prepare('SELECT * FROM %i ORDER BY id DESC LIMIT %d', $this->schema->messagesTable(), $limit)
+            : $this->wpdb->prepare(
+                'SELECT * FROM %i WHERE sender_id = %d ORDER BY id DESC LIMIT %d',
+                $this->schema->messagesTable(),
+                $senderId,
+                $limit
+            );
+        $rows = Row::all($this->wpdb->get_results((string) $query, ARRAY_A));
 
         return \array_map(self::hydrate(...), $rows);
+    }
+
+    /**
+     * The emails written to the user as a single person ({@see RecipientGroup::$person}).
+     *
+     * @return list<EmailMessage> newest first
+     */
+    public function addressedTo(int $userId): array
+    {
+        $rows = Row::all($this->wpdb->get_results((string) $this->wpdb->prepare(
+            'SELECT * FROM %i WHERE group_labels LIKE %s ORDER BY id DESC',
+            $this->schema->messagesTable(),
+            '%' . $this->wpdb->esc_like(self::personToken($userId)) . '%'
+        ), ARRAY_A));
+
+        return \array_map(self::hydrate(...), $rows);
+    }
+
+    /**
+     * How a group label refers to a person, see {@see RecipientGroup::$person}.
+     */
+    public static function personToken(int $userId): string
+    {
+        return '{user:' . $userId . '}';
     }
 
     /**
@@ -221,20 +251,37 @@ final class EmailLog
     }
 
     /**
-     * Keeps the log entries but removes the reference to the sender.
+     * Keeps the log entries but removes every reference to the user: as the sender (with the reply
+     * address of emails still being sent), as a single recipient in the groups, and as a recipient
+     * still waiting in the queue.
+     *
+     * @return int the number of log entries and queued emails changed
      */
-    public function anonymizeSender(int $userId): void
+    public function anonymizeUser(int $userId): int
     {
-        $this->execute($this->wpdb->prepare(
-            'UPDATE %i SET sender_id = NULL WHERE sender_id = %d',
+        $changed = $this->update($this->wpdb->prepare(
+            'UPDATE %i SET sender_id = NULL, reply_to = NULL WHERE sender_id = %d',
             $this->schema->messagesTable(),
             $userId
         ));
-        $this->execute($this->wpdb->prepare(
-            'DELETE FROM %i WHERE user_id = %d',
+        $changed += $this->update($this->wpdb->prepare(
+            'UPDATE %i SET group_labels = REPLACE(group_labels, %s, %s) WHERE group_labels LIKE %s',
+            $this->schema->messagesTable(),
+            self::personToken($userId),
+            self::personToken(0),
+            '%' . $this->wpdb->esc_like(self::personToken($userId)) . '%'
+        ));
+
+        $queued = Row::all($this->wpdb->get_results((string) $this->wpdb->prepare(
+            'SELECT id, message_id FROM %i WHERE user_id = %d',
             $this->schema->queueTable(),
             $userId
-        ));
+        ), ARRAY_A));
+        foreach ($queued as $row) {
+            $this->drop(Row::int($row, 'id'), Row::int($row, 'message_id'));
+        }
+
+        return $changed + \count($queued);
     }
 
     private function execute(?string $query): void
@@ -242,6 +289,19 @@ final class EmailLog
         if ($query !== null) {
             $this->wpdb->query($query);
         }
+    }
+
+    /**
+     * @return int the number of changed rows
+     */
+    private function update(?string $query): int
+    {
+        if ($query === null) {
+            return 0;
+        }
+        $changed = $this->wpdb->query($query);
+
+        return \is_int($changed) ? $changed : 0;
     }
 
     /**

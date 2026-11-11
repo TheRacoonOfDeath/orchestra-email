@@ -14,7 +14,8 @@ Part of the Orchestra plugin suite. Requires the [orchestra-core](https://github
 - Automatic emails registered by the other plugins, e.g. about changed parts, with texts the organizers change on the Email page
 - A sender name for all emails instead of "WordPress" (default "Orchestra"), changed by administrators on the Email page
 - One email per recipient, sent in the background in batches; replies go to the sender or an address they choose
-- A log of the sent emails with metadata only, deleted after 12 months
+- A log of the sent emails without recipient addresses or texts, deleted after 12 months; everyone sees their own emails, administrators all
+- Privacy (GDPR): the log is part of WordPress's personal data export and erasure, and **Settings → Privacy** suggests a text for the privacy policy
 
 ## Installation
 

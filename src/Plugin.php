@@ -6,12 +6,14 @@ namespace Orchestra\Email;
 
 use LogicException;
 use Orchestra\Core\Files\PrivateDirectoryCheck;
+use Orchestra\Core\Plugin as Core;
 use Orchestra\Core\Ui\Menu;
 use Orchestra\Core\Ui\MenuItem;
 use Orchestra\Email\Admin\ComposePage;
 use Orchestra\Email\Attachment\AttachmentRepository;
 use Orchestra\Email\Attachment\AttachmentService;
 use Orchestra\Email\Attachment\AttachmentStorage;
+use Orchestra\Email\Privacy\PersonalData;
 use Orchestra\Email\Ui\AutomaticEmailsController;
 use Orchestra\Email\Ui\SenderNameController;
 use Orchestra\Email\Ui\AutomaticEmailsView;
@@ -106,7 +108,9 @@ final class Plugin
         \add_action('init', [$this, 'setUp'], 1);
         \add_action(EmailSender::CRON_HOOK, [$this->sender, 'sendBatch']);
         \add_action(EmailService::PURGE_CRON_HOOK, [$this->email, 'purgeLog']);
-        \add_action('deleted_user', [$this->email, 'anonymizeUser']);
+        \add_action('deleted_user', [$this->email, 'forgetDeletedUser']);
+        \add_action(Core::REGISTER_CAPABILITIES_ACTION, [Capabilities::class, 'register']);
+        (new PersonalData($this->email))->register();
 
         $view = new EmailView($this->email);
         $automatic = new AutomaticEmailsView($this->email);
@@ -158,8 +162,15 @@ final class Plugin
     public function setUp(): void
     {
         $this->schema->migrateIfOutdated();
-        if (\wp_next_scheduled(EmailService::PURGE_CRON_HOOK) === false) {
+        $nextPurge = \wp_next_scheduled(EmailService::PURGE_CRON_HOOK);
+        if ($nextPurge === false) {
             \wp_schedule_event(\time() + HOUR_IN_SECONDS, 'daily', EmailService::PURGE_CRON_HOOK);
+        } elseif (\is_admin() && $nextPurge < \time() - DAY_IN_SECONDS) {
+            // WP-Cron does not run (e.g. DISABLE_WP_CRON without a server cron): purge anyway, so
+            // that the log is not kept longer than its retention period.
+            \wp_unschedule_event($nextPurge, EmailService::PURGE_CRON_HOOK);
+            $this->email->purgeLog();
+            \wp_schedule_event(\time() + DAY_IN_SECONDS, 'daily', EmailService::PURGE_CRON_HOOK);
         }
         // Not on every page view: the check queries the queue.
         if (\is_admin() || \wp_doing_cron()) {

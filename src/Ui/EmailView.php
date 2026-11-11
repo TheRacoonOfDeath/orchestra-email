@@ -6,6 +6,7 @@ namespace Orchestra\Email\Ui;
 
 use Orchestra\Email\Attachment\Attachment;
 use Orchestra\Email\Attachment\AttachmentService;
+use Orchestra\Email\Capabilities;
 use Orchestra\Email\EmailDraft;
 use Orchestra\Email\EmailMessage;
 use Orchestra\Email\EmailService;
@@ -105,11 +106,17 @@ final class EmailView
         return $html . $this->form($draft, $pageUrl, $mode);
     }
 
+    /**
+     * The emails the current user sent; administrators see those of everyone
+     * ({@see Capabilities::LOG_READ_OTHERS}), since other senders' emails can name single members.
+     */
     public function log(int $sentMessageId = 0): string
     {
         $html = '';
+        $userId = \get_current_user_id();
+        $everyone = \current_user_can(Capabilities::LOG_READ_OTHERS);
         $sent = $sentMessageId > 0 ? $this->email->message($sentMessageId) : null;
-        if ($sent !== null) {
+        if ($sent !== null && ($everyone || $sent->senderId === $userId)) {
             $message = $sent->status === EmailMessage::STATUS_SENT
                 /* translators: %d: number of recipients */
                 ? \__('Your email has been sent to %d recipients.', 'orchestra-email')
@@ -121,7 +128,7 @@ final class EmailView
 
         $rows = [];
         $format = self::dateTimeFormat();
-        foreach ($this->email->log() as $message) {
+        foreach ($this->email->log(200, $everyone ? null : $userId) as $message) {
             $sender = $message->senderId === null ? false : \get_userdata($message->senderId);
             $status = $message->status === EmailMessage::STATUS_SENT
                 ? Html::badge(\__('Sent', 'orchestra-email'), 'success')
@@ -139,7 +146,7 @@ final class EmailView
                 \esc_html(self::fromGmt($message->createdAt, $format)),
                 \esc_html($sender === false ? \__('Former member', 'orchestra-email') : $sender->display_name),
                 '<strong>' . \esc_html($message->subject) . '</strong>',
-                \esc_html(\implode(', ', $message->groupLabels)),
+                \esc_html(\implode(', ', \array_map(EmailService::displayLabel(...), $message->groupLabels))),
                 (string) $message->recipients,
                 $status,
             ];
@@ -160,7 +167,7 @@ final class EmailView
             /* translators: %d: number of days */
             \__('Texts are deleted once sent. The log shows who emailed which groups for %d days.', 'orchestra-email'),
             $this->email->retentionDays()
-        )) . '</p>';
+        ) . ($everyone ? '' : ' ' . \__('You see the emails you sent.', 'orchestra-email'))) . '</p>';
     }
 
     /**

@@ -175,10 +175,15 @@ final class AttachmentService
 
     /**
      * Deletes the attachments a user uploaded for emails not sent yet, e.g. when the user is deleted.
+     *
+     * @return int the number of deleted attachments
      */
-    public function deletePendingOf(int $userId): void
+    public function deletePendingOf(int $userId): int
     {
-        $this->delete($this->repository->pendingOfUser($userId));
+        $pending = $this->repository->pendingOfUser($userId);
+        $this->delete($pending);
+
+        return \count($pending);
     }
 
     /**

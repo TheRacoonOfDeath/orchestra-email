@@ -24,8 +24,9 @@ The plugin provides:
 - sending in the background in batches with WP-Cron, to avoid timeouts and hosting limits
 - a reply address, prefilled with the sender's email address and changeable, e.g. to a shared
   mailbox
-- a log with metadata only (sender, groups, subject, number of recipients, time), deleted after
-  12 months; the text and the reply address are deleted as soon as the email has been sent
+- a log of sender, groups, subject, number of recipients and time, without recipient addresses,
+  deleted after 12 months; the text and the reply address are deleted as soon as the email has been
+  sent. Senders see their own emails; administrators all (since 0.12)
 
 Delivery uses `wp_mail()`, so an SMTP plugin can be added at any time without changes.
 
@@ -69,7 +70,28 @@ The platform does not see these emails: they are not in the log, and the address
 email app (sent emails, address suggestions).
 
 **Email → Sent Emails** shows the log: date, sender, subject, groups, number of recipients and
-whether all emails were sent.
+whether all emails were sent. Since 0.12 everyone sees only the emails they sent; administrators
+(`orchestra_email_log_read_others`) see those of everyone, because other senders' emails can name
+single members.
+
+## Privacy
+
+See also the [GDPR documentation of orchestra-core](https://github.com/TheRacoonOfDeath/orchestra-core/blob/main/docs/gdpr.md).
+
+- The log never keeps recipient addresses. A group of a single person (`RecipientGroup::$person`,
+  since 0.12) is kept as a reference, `{user:<ID>}`, and shown with the person's current name, or
+  "Former member" once the account is deleted or erased. Entries from before 0.12 keep the name
+  until they are purged.
+- Automatic emails are logged with the name of the automatic email as subject (since 0.12), not
+  with a subject filled for one recipient.
+- **Tools → Export Personal Data** lists the emails the person sent and those written to them
+  personally. **Tools → Erase Personal Data** and deleting the account remove the person as sender
+  (with the reply address of emails still being sent), as single recipient and from the queue, and
+  delete their attachments not yet sent; the entries stay for the other senders' history.
+- **Settings → Privacy** suggests a text for the privacy policy, including the mail server as a
+  processor.
+- The log is purged daily by WP-Cron. Without WP-Cron, it is purged when an administrator opens
+  wp-admin and the purge is a day overdue. While the plugin is deactivated, nothing is purged.
 
 ## Registering groups
 
@@ -97,6 +119,9 @@ add_action(EmailService::REGISTER_GROUPS_ACTION, function (EmailGroupRegistry $g
 - A group with `listed: false` (the seventh argument, since 0.5) is not offered when writing an
   email and does not make the Email area visible; it appears only when a link preselects it, e.g.
   orchestra-members' group of a single member, used by "Write an email" on a member's profile.
+- A group of a single person passes the user ID as `person` (since 0.12), so the log refers to
+  the person instead of keeping their name (see [Privacy](#privacy)). Check
+  `property_exists(RecipientGroup::class, 'person')` to support older versions.
 - The action is fired the first time groups are needed in a request, e.g. when the Email menu
   is built. Keep the registration cheap; compute recipients only in the closure.
 - The capability is checked with `user_can($userId, $capability, ...$capabilityArgs)`. Passing the
@@ -154,7 +179,8 @@ $email->sendAutomatic('orchestra_projects_changed_parts', $senderId, $logLabel, 
 - `sendAutomatic()` fills the placeholders for each recipient (unknown ones stay as they are),
   queues one email per recipient with their own subject and body, and returns the number of
   recipients. The subject is plain text: tags of the values are removed. Replies go to the sender,
-  who gets no copy. The log lists it with `$logLabel` as its group.
+  who gets no copy. The log lists it with the name of the automatic email as subject and
+  `$logLabel` as its group; keep personal data out of `$logLabel`.
 - Recipients pass `orchestra_email_recipients` (with the automatic email's ID as the only group)
   and then `EmailService::AUTOMATIC_RECIPIENTS_FILTER` (`orchestra_email_automatic_recipients`,
   `(list<int> $userIds, string $automaticId)`), also again before each batch.
@@ -192,15 +218,16 @@ programs that do not show HTML.
 - Only the uploader can send their attachments. Recipients get them under their original names
   (made unique, e.g. "Plan (2).pdf").
 - Attachments are deleted as soon as the email has been sent to all recipients, like the text.
-  Attachments of emails that were never sent are deleted after a day, and those of deleted users
-  right away. The table `orchestra_email_attachments` holds their metadata until then.
+  Attachments of emails that were never sent are deleted after a day, and those a deleted or
+  erased user had not sent yet right away. The table `orchestra_email_attachments` holds their metadata until then.
 - Every recipient gets the files with their own email: 10 MB to 50 people are 500 MB of mail.
   Keep attachments small and check the limits of the host or mail provider.
 
 ## Sending
 
 - Recipients are resolved when the user clicks **Send** and stored in the queue table
-  `orchestra_core_email_queue` (user IDs only). The sender is added once, unless they have no
+  `orchestra_core_email_queue` (user IDs, and for automatic emails each recipient's subject and
+  body). The sender is added once, unless they have no
   valid email address; the log's number of recipients includes them.
 - The first batch is sent right away, the rest by the WP-Cron event `orchestra_core_email_send`
   every minute. A batch has 50 emails (filter `orchestra_email_batch_size`).
@@ -224,8 +251,9 @@ programs that do not show HTML.
 - When all emails of a message are sent, its text and reply address are deleted. The log entry is deleted after
   12 months (filter `orchestra_email_log_retention_days`) by the daily event
   `orchestra_core_email_purge`.
-- When a user is deleted, their log entries show "Former member" and their queued emails are
-  dropped.
+- When a user is deleted, their log entries show "Former member", the reply address of their
+  emails still being sent is removed, and the emails queued for them are dropped (and leave the
+  number of recipients).
 
 WP-Cron runs when the site is visited. On a site with little traffic, the remaining batches may
 wait for the next visit. For reliable sending, disable WP-Cron's page-load trigger

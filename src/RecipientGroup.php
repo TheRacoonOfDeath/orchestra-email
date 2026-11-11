@@ -23,6 +23,9 @@ final class RecipientGroup
      * @param bool $listed Whether the group is offered when writing an email. Unlisted groups, e.g. a
      *        single member, are only shown when a link preselects them ({@see EmailService::composeUrl()})
      *        and do not make the Email area visible. Since orchestra-email 0.5.
+     * @param int|null $person The user ID if the group is a single person, e.g. one member. The log
+     *        then refers to the person instead of keeping their name, so that it shows their current
+     *        name and "Former member" once the account is deleted or erased. Since orchestra-email 0.12.
      */
     public function __construct(
         public readonly string $id,
@@ -32,6 +35,7 @@ final class RecipientGroup
         public readonly string $capability,
         public readonly array $capabilityArgs = [],
         public readonly bool $listed = true,
+        public readonly ?int $person = null,
     ) {
     }
 

@@ -163,7 +163,8 @@ final class EmailService
 
         $sender = \get_userdata($senderId);
         $replyTo = $sender === false ? '' : $sender->user_email;
-        $this->log->createAutomatic($automaticId, $senderId, $logLabel, $replyTo, $emails);
+        // The log keeps the name of the email, not a subject filled for one of the recipients.
+        $this->log->createAutomatic($automaticId, $senderId, $email->label, $logLabel, $replyTo, $emails);
         $this->sender->sendBatch();
 
         return \count($emails);
@@ -271,7 +272,7 @@ final class EmailService
     public function send(EmailDraft $draft, int $senderId): int
     {
         $groups = $this->findGroups($draft->groupIds);
-        $labels = \array_map(static fn (RecipientGroup $g): string => self::fullLabel($g), $groups);
+        $labels = \array_map(static fn (RecipientGroup $g): string => self::logLabel($g), $groups);
 
         $recipientIds = $this->resolver->withSender($this->resolver->resolve($groups), $senderId);
         $messageId = $this->log->create($senderId, $draft, $labels, $recipientIds);
@@ -287,11 +288,22 @@ final class EmailService
     }
 
     /**
+     * @param int|null $senderId only the emails of this sender; null for all
      * @return list<EmailMessage> newest first
      */
-    public function log(int $limit = 200): array
+    public function log(int $limit = 200, ?int $senderId = null): array
     {
-        return $this->log->latest($limit);
+        return $this->log->latest($limit, $senderId);
+    }
+
+    /**
+     * The emails written to the user as a single person, e.g. by an organizer from their profile.
+     *
+     * @return list<EmailMessage> newest first
+     */
+    public function addressedTo(int $userId): array
+    {
+        return $this->log->addressedTo($userId);
     }
 
     public function retentionDays(): int
@@ -311,17 +323,58 @@ final class EmailService
     }
 
     /**
+     * Removes the user from the log and the queue and deletes their attachments that were not sent.
+     * Used by the privacy eraser and when the account is deleted ({@see forgetDeletedUser()}).
+     *
+     * @return int the number of log entries, queued emails and attachments changed
+     */
+    public function anonymizeUser(int $userId): int
+    {
+        $changed = $this->log->anonymizeUser($userId);
+        $changed += $this->attachments->deletePendingOf($userId);
+        $this->log->completeFinished();
+
+        return $changed;
+    }
+
+    /**
      * @internal Hooked to `deleted_user`.
      */
-    public function anonymizeUser(int $userId): void
+    public function forgetDeletedUser(int $userId): void
     {
-        $this->log->anonymizeSender($userId);
-        $this->attachments->deletePendingOf($userId);
+        $this->anonymizeUser($userId);
     }
 
     public static function fullLabel(RecipientGroup $group): string
     {
         return $group->category === '' ? $group->label : $group->category . ': ' . $group->label;
+    }
+
+    /**
+     * The label kept in the log: a single person is referred to by user ID, see
+     * {@see RecipientGroup::$person} and {@see displayLabel()}.
+     */
+    public static function logLabel(RecipientGroup $group): string
+    {
+        if ($group->person === null) {
+            return self::fullLabel($group);
+        }
+        $person = EmailLog::personToken($group->person);
+
+        return $group->category === '' ? $person : $group->category . ': ' . $person;
+    }
+
+    /**
+     * A label of the log as shown: references to people become their current name, or "Former
+     * member" when the account was deleted or erased.
+     */
+    public static function displayLabel(string $label): string
+    {
+        return (string) \preg_replace_callback('/\\{user:(\\d+)\\}/', static function (array $match): string {
+            $user = (int) $match[1] > 0 ? \get_userdata((int) $match[1]) : false;
+
+            return $user === false ? \__('Former member', 'orchestra-email') : $user->display_name;
+        }, $label);
     }
 
     /**
